@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        mCategories = (RecyclerView) findViewById(R.id.category_list);
+
         //----------база данный
         initDb();
         getCategories();
