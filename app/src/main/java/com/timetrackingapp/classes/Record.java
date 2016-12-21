@@ -1,11 +1,12 @@
 package com.timetrackingapp.classes;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Ксю on 21.12.2016.
  */
-public class Record
+public class Record implements Serializable
 {
     private int id;
     private String desc;

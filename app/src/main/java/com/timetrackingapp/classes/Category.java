@@ -1,9 +1,11 @@
 package com.timetrackingapp.classes;
 
+import java.io.Serializable;
+
 /**
  * Created by Ксю on 21.12.2016.
  */
-public class Category
+public class Category implements Serializable
 {
     private int id;
     private String title;

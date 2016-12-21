@@ -13,6 +13,7 @@ import com.timetrackingapp.classes.Category;
 import com.timetrackingapp.classes.Photo;
 import com.timetrackingapp.classes.Record;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -288,6 +289,31 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues4.put(TIME_SEGMENT, 5);
         contentValues4.put(DESCRIPTION, "rgrg");
         database.insert(RECORD, null, contentValues4);
+    }
+
+    public ArrayList<Category> parseCursor(Cursor cursor) {
+        ArrayList<Category> listCategories = new ArrayList<>();
+        String title;
+        int id;
+        String desc;
+        Category category;
+        int i = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            int idId = cursor.getColumnIndex(DbUtils.CATEGORY_ID);
+            int categoryId = cursor.getColumnIndex(DbUtils.CATEGORY_TITLE);
+            int descId = cursor.getColumnIndex(DbUtils.CATEGORY_DESC);
+            do {
+                id = cursor.getInt(idId);
+                title = cursor.getString(categoryId);
+                desc = cursor.getString(descId);
+                category = new Category(id, title, desc);
+                listCategories.add(category);
+                i++;
+            }
+            while (cursor.moveToNext());
+            cursor.close();
+        }
+        return listCategories;
     }
 
 }

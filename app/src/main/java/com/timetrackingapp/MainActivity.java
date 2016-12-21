@@ -1,20 +1,42 @@
 package com.timetrackingapp;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.timetrackingapp.adapter.RVAdapter;
+import com.timetrackingapp.classes.Category;
+import com.timetrackingapp.db.DbUtils;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public static final  String LOG_TAG = "CategoryActivity";
+    public static final int ADD_RESULT_CODE =1;
+    public static final int EDIT_CODE = 2;
+
+    private SQLiteDatabase database;
+    private DbUtils utils;
+    private DbUtils dbHelper;
+
+    private Category selectedCategory;
+    private ArrayList<Category> listCategories = new ArrayList<>();
+
+    private RecyclerView mCategories;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +53,12 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+
+        //----------база данный
+        initDb();
+        getCategories();
+        //----------
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -98,4 +126,20 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void getCategories()
+    {
+        utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
+        database = utils.getWritableDatabase();//дает бд на запись
+        listCategories = utils.parseCursor(utils.getAllRecords(database,DbUtils.CATEGORY_TABLE));
+        RVAdapter mAdapter = new RVAdapter(listCategories, MainActivity.this);
+        mCategories.setAdapter(mAdapter);
+    }
+
+    public void initDb()
+    {
+        dbHelper = new DbUtils(this,DbUtils.DATABASE_NAME,DbUtils.DATABASE_VERSION);
+        database = dbHelper.getWritableDatabase();//вызввает onCreate() и бд на запись
+    }
+
 }

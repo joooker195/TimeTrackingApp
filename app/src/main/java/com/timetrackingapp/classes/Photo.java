@@ -2,10 +2,12 @@ package com.timetrackingapp.classes;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * Created by Ксю on 21.12.2016.
  */
-public class Photo
+public class Photo implements Serializable
 {
     private int id;
     private String name;
