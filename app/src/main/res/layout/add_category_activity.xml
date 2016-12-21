@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingEnd="15dp"
-    android:paddingStart="15dp">
+    android:paddingStart="15dp"
+    android:paddingTop="10dp"
+    tools:context="com.timetrackingapp.AddCategoryActivity">
 
     <EditText
         android:layout_width="match_parent"
@@ -18,7 +22,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Название"
+        android:hint="Описание"
         android:paddingBottom="20dp"
         android:layout_below="@+id/add_title_category"
         android:layout_alignParentStart="true"

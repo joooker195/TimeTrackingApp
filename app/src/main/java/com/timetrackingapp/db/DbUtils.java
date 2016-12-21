@@ -138,7 +138,7 @@ public class DbUtils extends SQLiteOpenHelper
     public void insertCategories(SQLiteDatabase database, Category data){
         ContentValues contentValues = new ContentValues();
         contentValues.put(CATEGORY_TITLE,data.getTitle());
-     //   contentValues.put(CATEGORY_DESC,data.getDesc());
+        contentValues.put(CATEGORY_DESC,data.getDesc());
         database.beginTransaction();
         long res =  database.insert(DbUtils.CATEGORY_TABLE, null, contentValues);
         Log.d(LOG_TAG,"InsertResult "+res);
@@ -306,8 +306,8 @@ public class DbUtils extends SQLiteOpenHelper
             do {
                 id = cursor.getInt(idId);
                 title = cursor.getString(categoryId);
-            //    desc = cursor.getString(descId);
-                category = new Category(id, title, "");
+                desc = cursor.getString(descId);
+                category = new Category(id, title, desc);
                 listCategories.add(category);
                 i++;
             }

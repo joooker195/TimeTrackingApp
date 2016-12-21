@@ -30,9 +30,7 @@ public class MainActivity extends AppCompatActivity
 
     private SQLiteDatabase database;
     private DbUtils utils;
-    private DbUtils dbHelper;
 
-    private Category selectedCategory;
     private ArrayList<Category> listCategories = new ArrayList<>();
 
     private RecyclerView mCategories;
