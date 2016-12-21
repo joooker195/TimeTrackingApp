@@ -103,7 +103,7 @@ public class DbUtils extends SQLiteOpenHelper
         insertCategories(sqLiteDatabase,new Category("Сон", "Так мало"));
 
         //инициализируем развязку
-        ContentValues contentValues = new ContentValues();
+  /*      ContentValues contentValues = new ContentValues();
         contentValues.put(TIME_ID_REF,1);
         contentValues.put(PHOTO_ID_REF,1);
         sqLiteDatabase.insert(TIME_TO_PHOTO_TABLE,null,contentValues);
@@ -111,7 +111,7 @@ public class DbUtils extends SQLiteOpenHelper
         ContentValues cv = new ContentValues();
         cv.put(TIME_ID_REF,1);
         cv.put(PHOTO_ID_REF,2);
-        sqLiteDatabase.insert(TIME_TO_PHOTO_TABLE,null,cv);
+        sqLiteDatabase.insert(TIME_TO_PHOTO_TABLE,null,cv);*/
     }
 
     @Override
@@ -138,7 +138,7 @@ public class DbUtils extends SQLiteOpenHelper
     public void insertCategories(SQLiteDatabase database, Category data){
         ContentValues contentValues = new ContentValues();
         contentValues.put(CATEGORY_TITLE,data.getTitle());
-        contentValues.put(CATEGORY_DESC,data.getDesc());
+     //   contentValues.put(CATEGORY_DESC,data.getDesc());
         database.beginTransaction();
         long res =  database.insert(DbUtils.CATEGORY_TABLE, null, contentValues);
         Log.d(LOG_TAG,"InsertResult "+res);

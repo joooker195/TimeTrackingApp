@@ -43,7 +43,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CategoryViewHolder
 
     @Override
     public int getItemCount() {
-        return 0;
+        return categories.size();
     }
 
     public  class CategoryViewHolder extends RecyclerView.ViewHolder
