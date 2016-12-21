@@ -129,17 +129,19 @@ public class MainActivity extends AppCompatActivity
 
     public void getCategories()
     {
-        utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
-        database = utils.getWritableDatabase();//дает бд на запись
+
         listCategories = utils.parseCursor(utils.getAllRecords(database,DbUtils.CATEGORY_TABLE));
         RVAdapter mAdapter = new RVAdapter(listCategories, MainActivity.this);
         mCategories.setAdapter(mAdapter);
+
     }
 
     public void initDb()
     {
-        dbHelper = new DbUtils(this,DbUtils.DATABASE_NAME,DbUtils.DATABASE_VERSION);
-        database = dbHelper.getWritableDatabase();//вызввает onCreate() и бд на запись
+        this.deleteDatabase(DbUtils.DATABASE_NAME);//программмно удаляет б
+        utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
+        database = utils.getWritableDatabase();//дает бд на запись
+
     }
 
 }

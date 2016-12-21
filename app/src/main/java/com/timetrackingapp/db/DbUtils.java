@@ -57,7 +57,8 @@ public class DbUtils extends SQLiteOpenHelper
     //Запросы на создание таблиц
     public static final String CREATE_CATEGORY_QUERY = "CREATE TABLE `Category` (\n" +
             "\t`ID`\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-            "\t`CATEGORY_NAME`\tINTEGER\n" +
+            "\t`CATEGORY_TITLE`\tINTEGER\n" +
+            "\t`CATEGORY_DESC`\tINTEGER\n" +
             ");";
     public static final String CREATE_PHOTO_QUERY = "CREATE TABLE `Photo` (\n" +
             "\t`ID`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
@@ -96,10 +97,10 @@ public class DbUtils extends SQLiteOpenHelper
         sqLiteDatabase.execSQL(CREATE_TIMERECORD_QUERY);
         sqLiteDatabase.execSQL(CREATE_REFERENCE_TABLE);
         Log.d(LOG_TAG,"Table created sucs");
-        insertCatigories(sqLiteDatabase,new Category("Работа", "Люблю свою работу"));
-        insertCatigories(sqLiteDatabase,new Category("Обед", "На обед борщ"));
-        insertCatigories(sqLiteDatabase,new Category("Отдых", "Музыцируем"));
-        insertCatigories(sqLiteDatabase,new Category("Сон", "Так мало"));
+        insertCategories(sqLiteDatabase,new Category("Работа", "Люблю свою работу"));
+        insertCategories(sqLiteDatabase,new Category("Обед", "На обед борщ"));
+        insertCategories(sqLiteDatabase,new Category("Отдых", "Музыцируем"));
+        insertCategories(sqLiteDatabase,new Category("Сон", "Так мало"));
 
         //инициализируем развязку
         ContentValues contentValues = new ContentValues();
@@ -134,10 +135,10 @@ public class DbUtils extends SQLiteOpenHelper
     }
 
     //content values вставляет одну запись
-    public void insertCatigories(SQLiteDatabase database,Category data){
+    public void insertCategories(SQLiteDatabase database, Category data){
         ContentValues contentValues = new ContentValues();
         contentValues.put(CATEGORY_TITLE,data.getTitle());
-        contentValues.put(CATEGORY_DESC,data.getDesc());
+     //   contentValues.put(CATEGORY_DESC,data.getDesc());
         database.beginTransaction();
         long res =  database.insert(DbUtils.CATEGORY_TABLE, null, contentValues);
         Log.d(LOG_TAG,"InsertResult "+res);
@@ -153,7 +154,7 @@ public class DbUtils extends SQLiteOpenHelper
 
     public int getIdByName(String name,SQLiteDatabase database){
         int res = 0;
-        for (Category c:getall(database,CATEGORY_TABLE)){
+        for (Category c: getAll(database,CATEGORY_TABLE)){
             if(c.getTitle().equals(name)){
                 res = c.getId();
             }
@@ -161,7 +162,7 @@ public class DbUtils extends SQLiteOpenHelper
         return res;
     }
 
-    public List<Category> getall(SQLiteDatabase database, String table){
+    public List<Category> getAll(SQLiteDatabase database, String table){
         List<Category> result = new LinkedList<>();
         Cursor cursor = database.query(table, null,null, null, null, null, null);
         int i = 0;
@@ -305,8 +306,8 @@ public class DbUtils extends SQLiteOpenHelper
             do {
                 id = cursor.getInt(idId);
                 title = cursor.getString(categoryId);
-                desc = cursor.getString(descId);
-                category = new Category(id, title, desc);
+            //    desc = cursor.getString(descId);
+                category = new Category(id, title, "");
                 listCategories.add(category);
                 i++;
             }
