@@ -27,7 +27,7 @@ public class AddCategoriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_categories);
 
         mTitle = (EditText) findViewById(R.id.title_category);
-        mDesc = (EditText) findViewById(R.id.desc_category);
+      //  mDesc = (EditText) findViewById(R.id.desc_category);
         mAddButton = (Button) findViewById(R.id.add_category_button);
 
         utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);

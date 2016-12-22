@@ -23,16 +23,6 @@
         android:id="@+id/title_category"
         android:paddingStart="10dp" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Описание"
-        android:paddingBottom="20dp"
-        android:layout_below="@+id/add_title_category"
-        android:layout_alignParentStart="true"
-        android:id="@+id/desc_category"
-        android:paddingStart="10dp" />
-
 
     <Button
         android:layout_width="wrap_content"

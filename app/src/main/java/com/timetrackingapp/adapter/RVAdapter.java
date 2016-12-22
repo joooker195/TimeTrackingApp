@@ -38,7 +38,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CategoryViewHolder
     @Override
     public void onBindViewHolder(RVAdapter.CategoryViewHolder holder, int position) {
         holder.mTitle.setText(categories.get(position).getTitle());
-        holder.mDesc.setText(categories.get(position).getDesc());
+      //  holder.mDesc.setText(categories.get(position).getDesc());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CategoryViewHolder
         public CategoryViewHolder(View itemView) {
             super(itemView);
             mTitle = (TextView)itemView.findViewById(R.id.title_row_category);
-            mDesc = (TextView)itemView.findViewById(R.id.desc_row_category);
+           // mDesc = (TextView)itemView.findViewById(R.id.desc_row_category);
         }
     }
 }
