@@ -30,7 +30,7 @@ public class DbUtils extends SQLiteOpenHelper
     public static final String DATABASE_NAME = "TIME_TRACKER";
     public static final String CATEGORY_TABLE = "CATEGORY";
     public static final String PHOTO_TABLE = "PHOTO";
-    public  static final String RECORD = "RECORD";
+    public static final String RECORD_TABLE = "RECORD_TABLE";
     public static final String TIME_TO_PHOTO_TABLE = "TIME_TO_PHOTO";
 
     //Константы для полей таблицы "Категория"
@@ -118,7 +118,7 @@ public class DbUtils extends SQLiteOpenHelper
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("drop table if exists "+CATEGORY_TABLE);
         sqLiteDatabase.execSQL("drop table if exists "+PHOTO_TABLE);
-        sqLiteDatabase.execSQL("drop table if exists "+ RECORD);
+        sqLiteDatabase.execSQL("drop table if exists "+ RECORD_TABLE);
         sqLiteDatabase.execSQL("drop table if exists "+ TIME_TO_PHOTO_TABLE);
         Log.d(LOG_TAG,"Drop tables sucs");
         onCreate(sqLiteDatabase);
@@ -132,6 +132,21 @@ public class DbUtils extends SQLiteOpenHelper
     public long insertData(SQLiteDatabase database, ContentValues values, String table){
         long res =  database.insert(table,null,values);
         return res;
+    }
+
+    public void insertRecord(SQLiteDatabase database, Record data)
+    {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DESCRIPTION, data.getDesc());
+        contentValues.put(START_TIME, data.getBegin());
+        contentValues.put(END_TIME, data.getEnd());
+        contentValues.put(TIME_SEGMENT, data.getInterval());
+        database.beginTransaction();
+        long res =  database.insert(DbUtils.RECORD_TABLE, null, contentValues);
+        Log.d(LOG_TAG,"InsertResult "+res);
+        database.setTransactionSuccessful();
+        database.endTransaction();
+
     }
 
     //content values вставляет одну запись
@@ -249,7 +264,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues.put(END_TIME, calendar.getTimeInMillis());
         contentValues.put(TIME_SEGMENT, 10);
         contentValues.put(DESCRIPTION, "asdf");
-        database.insert(RECORD, null, contentValues);
+        database.insert(RECORD_TABLE, null, contentValues);
 
         ContentValues contentValues1 = new ContentValues();
         contentValues1.put(CATEGORY_ID_REF, 1);
@@ -259,7 +274,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues1.put(END_TIME, calendar.getTimeInMillis());
         contentValues1.put(TIME_SEGMENT, 10);
         contentValues1.put(DESCRIPTION, "efef");
-        database.insert(RECORD, null, contentValues1);
+        database.insert(RECORD_TABLE, null, contentValues1);
 
         ContentValues contentValues2 = new ContentValues();
         contentValues2.put(CATEGORY_ID_REF, 1);
@@ -269,7 +284,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues2.put(END_TIME, calendar.getTimeInMillis());
         contentValues2.put(TIME_SEGMENT, 10);
         contentValues2.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD, null, contentValues2);
+        database.insert(RECORD_TABLE, null, contentValues2);
 
         ContentValues contentValues3 = new ContentValues();
         contentValues3.put(CATEGORY_ID_REF, 2);
@@ -279,7 +294,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues3.put(END_TIME, calendar.getTimeInMillis());
         contentValues3.put(TIME_SEGMENT, 50);
         contentValues3.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD, null, contentValues3);
+        database.insert(RECORD_TABLE, null, contentValues3);
 
         ContentValues contentValues4 = new ContentValues();
         contentValues4.put(CATEGORY_ID_REF, 3);
@@ -289,7 +304,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues4.put(END_TIME, calendar.getTimeInMillis());
         contentValues4.put(TIME_SEGMENT, 5);
         contentValues4.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD, null, contentValues4);
+        database.insert(RECORD_TABLE, null, contentValues4);
     }
 
     public ArrayList<Category> parseCursor(Cursor cursor) {

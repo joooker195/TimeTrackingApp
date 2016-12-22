@@ -10,7 +10,7 @@ public class Record implements Serializable
 {
     private int id;
     private String desc;
-    private String interval;
+    private long interval;
     private long begin;
     private long end;
     private Category category;
@@ -19,7 +19,7 @@ public class Record implements Serializable
     public Record() {
     }
 
-    public Record(int id, String desc, String interval, long begin, long end, Category category, List<Photo> photos) {
+    public Record(int id, String desc, long interval, long begin, long end, Category category, List<Photo> photos) {
         this.id = id;
         this.desc = desc;
         this.interval = interval;
@@ -33,7 +33,7 @@ public class Record implements Serializable
         this.desc = desc;
     }
 
-    public Record(String desc, String interval, long begin, long end, Category category, List<Photo> photos) {
+    public Record(String desc, long interval, long begin, long end, Category category, List<Photo> photos) {
         this.desc = desc;
         this.interval = interval;
         this.begin = begin;
@@ -58,11 +58,11 @@ public class Record implements Serializable
         this.desc = desc;
     }
 
-    public String getInterval() {
+    public long getInterval() {
         return interval;
     }
 
-    public void setInterval(String interval) {
+    public void setInterval(long interval) {
         this.interval = interval;
     }
 
