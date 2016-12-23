@@ -83,10 +83,12 @@ public class RecordAdapter extends BaseAdapter {
         LinearLayout linearLayout = (LinearLayout) row.findViewById(R.id.photos_layout);
         for (Photo photo:record.getPhotos()){
             try {
-                ImageView imageView = new ImageView(ctx);
-                imageView.setImageBitmap(photo.getImage());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                linearLayout.addView(imageView);
+                if(photo!=null) {
+                    ImageView imageView = new ImageView(ctx);
+                    imageView.setImageBitmap(photo.getImage());
+                    imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    linearLayout.addView(imageView);
+                }
             }
             catch (Exception e)
             {

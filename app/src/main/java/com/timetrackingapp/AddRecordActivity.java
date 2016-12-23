@@ -138,7 +138,7 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
       //  simpleDateFormat.
 
        // Record record = new Record(desc, interval, begin, end, idCategoryRef);
-        utils.insertRecord(database, new Record(desc, 12, begin, end, idCategoryRef));
+        utils.insertRecord(database, new Record(desc, 12, begin, end, idCategoryRef, "", allPhoto));
         Intent intent = new Intent();
         intent.putExtra("rec",new Record(desc, interval, begin, end, idCategoryRef));
         setResult(RESULT_OK, intent);

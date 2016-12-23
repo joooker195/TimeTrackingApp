@@ -31,7 +31,7 @@ public class DbUtils extends SQLiteOpenHelper
     public static final String CATEGORY_TABLE = "CATEGORY";
     public static final String PHOTO_TABLE = "PHOTO";
     public static final String RECORD = "RECORD";
-    public static final String TIME_TO_PHOTO_TABLE = "TIME_TO_PHOTO";
+    public static final String TIME_PHOTO_TABLE = "time_photo";
 
     //Константы для полей таблицы "Категория"
     public static final String CATEGORY_ID = "ID";
@@ -39,8 +39,8 @@ public class DbUtils extends SQLiteOpenHelper
     public static final String CATEGORY_DESC = "CATEGORY_DESC";
 
     //таблица развязка между временем и категорией
-    public static final String TIME_ID_REF = "TIME_ID_REF";
-    public static final String PHOTO_ID_REF="PHOTO_ID_REF";
+    public static final String TIME_ID_REF = "time_id_ref";
+    public static final String PHOTO_ID_REF="photo_id_ref";
 
     //таблица с фотками
     public static final String PHOTO_ID = "ID";
@@ -106,12 +106,12 @@ public class DbUtils extends SQLiteOpenHelper
         ContentValues contentValues = new ContentValues();
         contentValues.put(TIME_ID_REF,1);
         contentValues.put(PHOTO_ID_REF,1);
-        sqLiteDatabase.insert(TIME_TO_PHOTO_TABLE,null,contentValues);
+        long res = sqLiteDatabase.insert(TIME_PHOTO_TABLE,null,contentValues);
 
         ContentValues cv = new ContentValues();
         cv.put(TIME_ID_REF,1);
         cv.put(PHOTO_ID_REF,2);
-        sqLiteDatabase.insert(TIME_TO_PHOTO_TABLE,null,cv);
+        res = sqLiteDatabase.insert(TIME_PHOTO_TABLE,null,cv);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class DbUtils extends SQLiteOpenHelper
         sqLiteDatabase.execSQL("drop table if exists "+CATEGORY_TABLE);
         sqLiteDatabase.execSQL("drop table if exists "+PHOTO_TABLE);
         sqLiteDatabase.execSQL("drop table if exists "+ RECORD);
-        sqLiteDatabase.execSQL("drop table if exists "+ TIME_TO_PHOTO_TABLE);
+        sqLiteDatabase.execSQL("drop table if exists "+ TIME_PHOTO_TABLE);
         Log.d(LOG_TAG,"Drop tables sucs");
         onCreate(sqLiteDatabase);
     }
@@ -167,7 +167,7 @@ public class DbUtils extends SQLiteOpenHelper
 
     public List<Photo> getPhotoListByTimeRecordId(SQLiteDatabase database,int TimeId) {
         List<Photo> photosByCategory = new LinkedList<>();
-        Cursor cursor = database.query(PHOTO_TABLE, null, TIME_ID_REF + "=?", new String[]{String.valueOf(TimeId)}, null, null, null);
+        Cursor cursor = database.query(TIME_PHOTO_TABLE, null, TIME_ID_REF + "=?", new String[]{String.valueOf(TimeId)}, null, null, null);
         int idCategoryIdx;
         int idPhotoIdx;
         int i = 0;
