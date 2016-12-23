@@ -11,16 +11,22 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.timetrackingapp.adapter.CustomPhotoAdapter;
+import com.timetrackingapp.classes.Photo;
 import com.timetrackingapp.classes.Record;
 import com.timetrackingapp.db.DbUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddRecordActivity extends AppCompatActivity implements Comparable{
 
@@ -32,9 +38,15 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
     private EditText mDesc;
     private Button mAddButton;
     private TimePicker mTimePicker;
+    private Spinner mPhotoSpinner;
 
     private DbUtils utils;
     private SQLiteDatabase database;
+
+    private List<Photo> allPhoto = new ArrayList<>();
+    private List<Photo> selectedListPhotos = new ArrayList<>();
+    private CustomPhotoAdapter customPhotoAdapter;
+    private Photo selectedPhoto;
 
     private long begin;
     private long end;
@@ -47,13 +59,14 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_record);
+        setContentView(R.layout.activity_add_record);
 
         mTitle = (TextView) findViewById(R.id.cat_title);
         mBegin = (EditText) findViewById(R.id.time_begin);
         mEnd = (EditText) findViewById(R.id.time_end);
         mDesc = (EditText) findViewById(R.id.add_desc);
         mAddButton = (Button) findViewById(R.id.add_record_button);
+        mPhotoSpinner = (Spinner) findViewById(R.id.photoSpinner);
 
         mTitle.setText(TITLE);
 
@@ -91,6 +104,23 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        allPhoto = utils.getAllPhoto(database);
+
+        customPhotoAdapter = new CustomPhotoAdapter(AddRecordActivity.this, R.layout.content_photo, allPhoto);
+        mPhotoSpinner.setAdapter(customPhotoAdapter);
+        mPhotoSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedPhoto = (Photo) adapterView.getItemAtPosition(i);
+                selectedListPhotos.add(selectedPhoto);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 

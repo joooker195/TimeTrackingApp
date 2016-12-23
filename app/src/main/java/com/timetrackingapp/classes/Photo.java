@@ -25,6 +25,10 @@ public class Photo implements Serializable
     public Photo() {
 
     }
+    public Photo(Bitmap image, int id) {
+        this.image = image;
+        this.id = id;
+    }
 
     public int getId() {
 

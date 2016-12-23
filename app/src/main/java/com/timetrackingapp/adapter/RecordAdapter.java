@@ -1,14 +1,17 @@
 package com.timetrackingapp.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.timetrackingapp.R;
+import com.timetrackingapp.classes.Photo;
 import com.timetrackingapp.classes.Record;
 
 import java.text.DateFormat;
@@ -78,7 +81,7 @@ public class RecordAdapter extends BaseAdapter {
         segment.setText(segment.getText() + dfISO.format(date));
 
         LinearLayout linearLayout = (LinearLayout) row.findViewById(R.id.photos_layout);
-    /*    for (Photo photo:record.getPhoto()){
+        for (Photo photo:record.getPhotos()){
             try {
                 ImageView imageView = new ImageView(ctx);
                 imageView.setImageBitmap(photo.getImage());
@@ -89,7 +92,7 @@ public class RecordAdapter extends BaseAdapter {
             {
                 Log.e("TRAExc", e.getMessage());
             }
-        }*/
+        }
         return row;
     }
 
