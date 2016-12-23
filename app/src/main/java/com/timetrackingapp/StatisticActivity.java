@@ -45,9 +45,9 @@ public class StatisticActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistic);
         setTitle("Статистика");
 
-        begin = (EditText) findViewById(R.id.time_begin_statistic);
-        end = (EditText) findViewById(R.id.time_end_statistic);
         mList = (ListView) findViewById(R.id.listView);
+        graficoPartidos = (PieChart) findViewById(R.id.asdf);
+        graficoPartidos.getBackgroundPaint().setColor(Color.WHITE);
 
         utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
         database = utils.getWritableDatabase();
@@ -61,8 +61,9 @@ public class StatisticActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titles);
         mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mList.setAdapter(adapter);*/
-//        drawPie();
         viewList();
+        drawPie();
+
 
     }
 
@@ -90,18 +91,18 @@ public class StatisticActivity extends AppCompatActivity {
         title = mapCount.keySet().toArray();
         count = mapCount.values().toArray();
 
-        for(int i =0; i<mapCount.size(); i++)
+        for(int i =mapCount.size()-1; i>=0; i--)
         {
-            for(int j=mapCount.size()-1; j<i; j++)
+            for(int j=0; j<i; j++)
             {
-                if((Integer)count[j-1] > (Integer) count[j])
+                if((Integer)count[j+1] >= (Integer) count[j])
                 {
-                    c = (Integer) count[j-1];
-                    count[j-1] = count[j];
+                    c = (Integer) count[j+1];
+                    count[j+1] = count[j];
                     count[j] = c;
 
-                    t = (String) title[j-1];
-                    title[j-1] = title[j];
+                    t = (String) title[j+1];
+                    title[j+1] = title[j];
                     title[j] = t;
                 }
             }

@@ -386,7 +386,7 @@ public class DbUtils extends SQLiteOpenHelper
 
     public int pieData(SQLiteDatabase database,Category category){
         int res;
-        String sql = "select sum(TIME_SEGMENT) from TimeRecord where CATEGORY_ID=?";
+        String sql = "select sum(TIME_SEGMENT) from Record where CATEGORY_ID=?";
         String str = "";
         Cursor cursor = database.rawQuery(sql,new String[]{String.valueOf(category.getId())},null);
         if (cursor != null && cursor.moveToFirst()) {
@@ -397,7 +397,7 @@ public class DbUtils extends SQLiteOpenHelper
             }
             while (cursor.moveToNext());
         }
-        if (str==null){
+        if (str == null){
             res = 0;
         }
         else {
