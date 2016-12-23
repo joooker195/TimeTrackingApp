@@ -86,20 +86,25 @@ public class RecordActivity extends AppCompatActivity implements Comparable{
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addData();
+                try {
+                    addData();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
     }
 
-    public void addData(){
+    public void addData() throws ParseException {
 
         String title = mTitle.getText().toString();
         String desc = mDesc.getText().toString();
 
         idCategoryRef = utils.getIdCategoryByName(title, database);
 
-        long interval = end - begin;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        long interval = end - begin - simpleDateFormat.parse("3:00").getTime();
 
        // Record record = new Record(desc, interval, begin, end, idCategoryRef);
         utils.insertRecord(database, new Record(desc, interval, begin, end, idCategoryRef));

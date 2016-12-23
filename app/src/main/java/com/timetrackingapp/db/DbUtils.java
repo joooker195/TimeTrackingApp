@@ -129,6 +129,42 @@ public class DbUtils extends SQLiteOpenHelper
         return  cursor;
     }
 
+    public List<Record> getRecords(SQLiteDatabase database){
+        List<Record> res = new LinkedList<>();
+        Record record;
+        List<Photo> photoRecords = new LinkedList<>();
+        int i = 0;
+        int idId,descriptionId,startDateId,endDateId,segmentId,categoryId;
+        int idRec,idCat;
+        long begin,end, segment;
+        String desc, titleCat;
+        Cursor cursor = getAllRecords(database,RECORD);
+        if (cursor != null && cursor.moveToFirst()) {
+            idId = cursor.getColumnIndex(CATEGORY_ID);
+            descriptionId = cursor.getColumnIndex(DESCRIPTION);
+            startDateId = cursor.getColumnIndex(START_TIME);
+            endDateId = cursor.getColumnIndex(END_TIME);
+            segmentId = cursor.getColumnIndex(TIME_SEGMENT);
+            categoryId = cursor.getColumnIndex(CATEGORY_ID_REF);
+            do {
+                idRec = cursor.getInt(idId);
+                desc = cursor.getString(descriptionId);
+                begin = cursor.getLong(startDateId);
+                end = cursor.getLong(endDateId);
+                segment = cursor.getLong(segmentId);
+                idCat = cursor.getInt(categoryId);
+                titleCat = getCategoryTitleById(idCat, database);
+          //     photoRecords = getPhotoListByTimeRecordId(database,iDval);
+                record = new Record(desc, segment, begin, end, idCat, titleCat);
+                res.add(record);
+                i++;
+            }
+            while (cursor.moveToNext());
+            cursor.close();
+        }
+        return res;
+    }
+
     public long insertData(SQLiteDatabase database, ContentValues values, String table){
         long res =  database.insert(table,null,values);
         return res;
@@ -173,10 +209,24 @@ public class DbUtils extends SQLiteOpenHelper
         for (Category c: getCategories(database,CATEGORY_TABLE)){
             if(c.getTitle().equals(name)){
                 res = c.getId();
+                break;
             }
         }
         return res;
     }
+
+    public String getCategoryTitleById(int id, SQLiteDatabase database)
+    {
+        String res = "";
+        for (Category c: getCategories(database,CATEGORY_TABLE)){
+            if(c.getId() == id){
+                res = c.getTitle();
+                break;
+            }
+        }
+        return res;
+    }
+
 
     public List<Category> getCategories(SQLiteDatabase database, String table){
         List<Category> result = new LinkedList<>();
@@ -184,16 +234,13 @@ public class DbUtils extends SQLiteOpenHelper
         int i = 0;
         String name;
         int id;
-        String desc;
         Category category;
         if (cursor != null && cursor.moveToFirst()) {
             int idId = cursor.getColumnIndex(DbUtils.CATEGORY_ID);
             int titleId = cursor.getColumnIndex(DbUtils.CATEGORY_TITLE);
-            int descId = cursor.getColumnIndex(DbUtils.CATEGORY_DESC);
             do {
                 id = cursor.getInt(idId);
                 name = cursor.getString(titleId);
-             //   desc = cursor.getString(descId);
                 category = new Category(id, name);
                 result.add(category);
                 i++;

@@ -122,7 +122,8 @@ public class MainActivity extends AppCompatActivity
         else
         if (id == R.id.nav_records)
         {
-
+            Intent intent = new Intent(MainActivity.this, RecordListActivity.class);
+            startActivity(intent);
         }
         else
         if (id == R.id.nav_about) {
