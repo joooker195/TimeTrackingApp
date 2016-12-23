@@ -105,6 +105,7 @@ public class RecordActivity extends AppCompatActivity implements Comparable{
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         long interval = end - begin - simpleDateFormat.parse("3:00").getTime();
+      //  simpleDateFormat.
 
        // Record record = new Record(desc, interval, begin, end, idCategoryRef);
         utils.insertRecord(database, new Record(desc, interval, begin, end, idCategoryRef));

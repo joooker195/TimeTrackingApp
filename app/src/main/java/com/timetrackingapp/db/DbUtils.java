@@ -227,8 +227,12 @@ public class DbUtils extends SQLiteOpenHelper
         return res;
     }
 
+    public List<Category> getAllCategories(SQLiteDatabase database)
+    {
+        return getCategories(database,CATEGORY_TABLE);
+    }
 
-    public List<Category> getCategories(SQLiteDatabase database, String table){
+    private List<Category> getCategories(SQLiteDatabase database, String table){
         List<Category> result = new LinkedList<>();
         Cursor cursor = database.query(table, null,null, null, null, null, null);
         int i = 0;
@@ -378,6 +382,38 @@ public class DbUtils extends SQLiteOpenHelper
             cursor.close();
         }
         return listCategories;
+    }
+
+    public int pieData(SQLiteDatabase database,Category category){
+        int res;
+        String sql = "select sum(TIME_SEGMENT) from TimeRecord where CATEGORY_ID=?";
+        String str = "";
+        Cursor cursor = database.rawQuery(sql,new String[]{String.valueOf(category.getId())},null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                for (String cn : cursor.getColumnNames()) {
+                    str = cursor.getString(cursor.getColumnIndex(cn));
+                }
+            }
+            while (cursor.moveToNext());
+        }
+        if (str==null){
+            res = 0;
+        }
+        else {
+            res = Integer.valueOf(str);
+        }
+        cursor.close();
+        return res;
+    }
+
+    public int getCountRecordFromCategory(SQLiteDatabase database,Category category,long startDate,long endDate){
+        int res = 0;
+        sqlQuery = "select * from "+RECORD+" where "+CATEGORY_ID_REF+" ="+String.valueOf(category.getId()+" and "+START_TIME+" between "+startDate+" and "+endDate);
+        Cursor cursor = database.rawQuery(sqlQuery,null,null);
+        res = cursor.getCount();
+        cursor.close();
+        return res;
     }
 
 }
