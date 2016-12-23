@@ -1,9 +1,11 @@
 package com.timetrackingapp;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -33,6 +35,7 @@ public class StatisticActivity extends AppCompatActivity {
     private ListView mList;
 
     private PieChart graficoPartidos;
+    private SparseBooleanArray checked;
     private SQLiteDatabase database;
     private DbUtils utils;
     private ArrayAdapter<Object> adapter;
@@ -51,16 +54,8 @@ public class StatisticActivity extends AppCompatActivity {
 
         utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
         database = utils.getWritableDatabase();
-       // allCategories = utils.parseCursor(utils.getAllRecords(database,DbUtils.CATEGORY_TABLE));
-        allCategories = utils.getAllCategories(database);
-      /*  for (int i=0; i<allCategories.size(); i++)
-        {
 
-            titles.add(i,allCategories.get(i).getTitle());
-        }
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titles);
-        mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        mList.setAdapter(adapter);*/
+        allCategories = utils.getAllCategories(database);
         viewList();
         drawPie();
 
@@ -107,7 +102,7 @@ public class StatisticActivity extends AppCompatActivity {
                 }
             }
         }
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, title);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, title);
         mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mList.setAdapter(adapter);
     }
@@ -135,6 +130,22 @@ public class StatisticActivity extends AppCompatActivity {
         }
     }
 
+    public void showStatisticRecord()
+    {
+        checked = mList.getCheckedItemPositions();
+        List<String> selectItem = new ArrayList<>();
+        for (int i = 0; i < checked.size(); i++) {
+            int position = checked.keyAt(i);
+            // Add sport if it is checked i.e.) == TRUE!
+            if (checked.valueAt(i))
+                selectItem.add( (String) adapter.getItem(position));
+        }
+
+        StatisticRecordActivity.SELECT_ITEM = selectItem;
+        Intent intent = new Intent(StatisticActivity.this, StatisticRecordActivity.class);
+        startActivity(intent);
+    }
+
 
 
 
@@ -156,7 +167,7 @@ public class StatisticActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.statistic_settings) {
-            return true;
+            showStatisticRecord();
         }
 
         return super.onOptionsItemSelected(item);
