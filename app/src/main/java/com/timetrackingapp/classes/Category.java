@@ -15,15 +15,14 @@ public class Category implements Serializable
 
     }
 
-    public Category(int id, String title, String desc) {
+    public Category(int id, String title) {
         this.id = id;
         this.title = title;
-        this.desc = desc;
     }
 
-    public Category(String title, String desc) {
+    public Category(String title) {
         this.title = title;
-        this.desc = desc;
+     //   this.desc = desc;
     }
 
     public int getId() {

@@ -13,32 +13,39 @@ public class Record implements Serializable
     private long interval;
     private long begin;
     private long end;
-    private Category category;
+    private int categoryRef;
     private List<Photo> photos;
+
+    public int getCategoryRef() {
+        return categoryRef;
+    }
+
+    public void setCategoryRef(int categoryRef) {
+        this.categoryRef = categoryRef;
+    }
+
 
     public Record() {
     }
 
-    public Record(int id, String desc, long interval, long begin, long end, Category category, List<Photo> photos) {
-        this.id = id;
+    public Record(String desc, long interval, long begin, long end, int category) {
         this.desc = desc;
         this.interval = interval;
         this.begin = begin;
         this.end = end;
-        this.category = category;
-        this.photos = photos;
+        this.categoryRef = category;
     }
 
     public Record(String desc) {
         this.desc = desc;
     }
 
-    public Record(String desc, long interval, long begin, long end, Category category, List<Photo> photos) {
+    public Record(String desc, long interval, long begin, long end, int category, List<Photo> photos) {
         this.desc = desc;
         this.interval = interval;
         this.begin = begin;
         this.end = end;
-        this.category = category;
+        this.categoryRef = category;
         this.photos = photos;
     }
 
@@ -82,12 +89,12 @@ public class Record implements Serializable
         this.end = end;
     }
 
-    public Category getCategory() {
-        return category;
+    public int getCategory() {
+        return categoryRef;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategory(int category) {
+        this.categoryRef = category;
     }
 
     public List<Photo> getPhotos() {

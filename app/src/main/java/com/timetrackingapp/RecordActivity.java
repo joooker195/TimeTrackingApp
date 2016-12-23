@@ -16,11 +16,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.timetrackingapp.classes.Record;
 import com.timetrackingapp.db.DbUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 public class RecordActivity extends AppCompatActivity implements Comparable{
 
@@ -36,15 +36,10 @@ public class RecordActivity extends AppCompatActivity implements Comparable{
     private DbUtils utils;
     private SQLiteDatabase database;
 
-    private int startHour;
-    private int startMinute;
-    private int endHour;
-    private int endMinute;
-    private Calendar fromCalendar;
-    private Calendar toCalendar;
+    private long begin;
+    private long end;
 
-    long begin;
-    long end;
+    private int idCategoryRef;
 
     private boolean flag;
 
@@ -64,8 +59,6 @@ public class RecordActivity extends AppCompatActivity implements Comparable{
 
         mBegin.setInputType(InputType.TYPE_NULL);
         mEnd.setInputType(InputType.TYPE_NULL);
-
-
 
         mBegin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,29 +80,31 @@ public class RecordActivity extends AppCompatActivity implements Comparable{
             }
         });
 
+        utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
+        database = utils.getWritableDatabase();
+
+        mAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addData();
+            }
+        });
 
     }
 
-    public void onAddData(View view){
-     /*   startHour = startTime.getCurrentHour();
-        startMinute = startTime.getCurrentMinute();
-        String startTimeStr = startHour+":"+startMinute;
-        endHour = endTime.getCurrentHour();
-        endMinute = endTime.getCurrentMinute();
-        String  description = descriptionEdit.getText().toString();
-        String segment = segmentEdit.getText().toString();
-        validate(segment);
-        TimeRecord newDaata = new TimeRecord(111,111,description,selectedCategory,selectedListPhotos,segment);
-        utils.insertTimeRecord(database,newDaata);
-        intent = new Intent();
-        setResult(RESULT_OK, intent);
-        finish();*/
-
+    public void addData(){
 
         String title = mTitle.getText().toString();
-     //   utils.insertCategories(database,new Category(title, ""));
+        String desc = mDesc.getText().toString();
+
+        idCategoryRef = utils.getIdCategoryByName(title, database);
+
+        long interval = end - begin;
+
+       // Record record = new Record(desc, interval, begin, end, idCategoryRef);
+        utils.insertRecord(database, new Record(desc, interval, begin, end, idCategoryRef));
         Intent intent = new Intent();
-        //intent.putExtra("cat",new Category(title, ""));
+        intent.putExtra("rec",new Record(desc, interval, begin, end, idCategoryRef));
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -156,6 +151,7 @@ public class RecordActivity extends AppCompatActivity implements Comparable{
     public int compareTo(Object o) {
         return 0;
     }
+
     private static long parseTime(int timeIntHour, int timeIntMinute) throws ParseException {
         String timeHour = String.valueOf(timeIntHour);
         String timeMinute = String.valueOf(timeIntMinute);

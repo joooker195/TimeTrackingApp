@@ -30,7 +30,7 @@ public class DbUtils extends SQLiteOpenHelper
     public static final String DATABASE_NAME = "TIME_TRACKER";
     public static final String CATEGORY_TABLE = "CATEGORY";
     public static final String PHOTO_TABLE = "PHOTO";
-    public static final String RECORD_TABLE = "RECORD_TABLE";
+    public static final String RECORD = "RECORD";
     public static final String TIME_TO_PHOTO_TABLE = "TIME_TO_PHOTO";
 
     //Константы для полей таблицы "Категория"
@@ -97,10 +97,10 @@ public class DbUtils extends SQLiteOpenHelper
         sqLiteDatabase.execSQL(CREATE_TIMERECORD_QUERY);
         sqLiteDatabase.execSQL(CREATE_REFERENCE_TABLE);
         Log.d(LOG_TAG,"Table created sucs");
-        insertCategories(sqLiteDatabase,new Category("Работа", "Люблю свою работу"));
-        insertCategories(sqLiteDatabase,new Category("Обед", "На обед борщ"));
-        insertCategories(sqLiteDatabase,new Category("Отдых", "Музыцируем"));
-        insertCategories(sqLiteDatabase,new Category("Сон", "Так мало"));
+        insertCategories(sqLiteDatabase,new Category("Работа"));
+        insertCategories(sqLiteDatabase,new Category("Обед"));
+        insertCategories(sqLiteDatabase,new Category("Отдых"));
+        insertCategories(sqLiteDatabase,new Category("Сон"));
 
         //инициализируем развязку
   /*      ContentValues contentValues = new ContentValues();
@@ -118,7 +118,7 @@ public class DbUtils extends SQLiteOpenHelper
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("drop table if exists "+CATEGORY_TABLE);
         sqLiteDatabase.execSQL("drop table if exists "+PHOTO_TABLE);
-        sqLiteDatabase.execSQL("drop table if exists "+ RECORD_TABLE);
+        sqLiteDatabase.execSQL("drop table if exists "+ RECORD);
         sqLiteDatabase.execSQL("drop table if exists "+ TIME_TO_PHOTO_TABLE);
         Log.d(LOG_TAG,"Drop tables sucs");
         onCreate(sqLiteDatabase);
@@ -141,8 +141,9 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues.put(START_TIME, data.getBegin());
         contentValues.put(END_TIME, data.getEnd());
         contentValues.put(TIME_SEGMENT, data.getInterval());
+        contentValues.put(CATEGORY_ID_REF, data.getCategoryRef());
         database.beginTransaction();
-        long res =  database.insert(DbUtils.RECORD_TABLE, null, contentValues);
+        long res =  database.insert(DbUtils.RECORD, null, contentValues);
         Log.d(LOG_TAG,"InsertResult "+res);
         database.setTransactionSuccessful();
         database.endTransaction();
@@ -167,9 +168,9 @@ public class DbUtils extends SQLiteOpenHelper
         return updCount;
     }
 
-    public int getIdByName(String name,SQLiteDatabase database){
+    public int getIdCategoryByName(String name,SQLiteDatabase database){
         int res = 0;
-        for (Category c: getAll(database,CATEGORY_TABLE)){
+        for (Category c: getCategories(database,CATEGORY_TABLE)){
             if(c.getTitle().equals(name)){
                 res = c.getId();
             }
@@ -177,7 +178,7 @@ public class DbUtils extends SQLiteOpenHelper
         return res;
     }
 
-    public List<Category> getAll(SQLiteDatabase database, String table){
+    public List<Category> getCategories(SQLiteDatabase database, String table){
         List<Category> result = new LinkedList<>();
         Cursor cursor = database.query(table, null,null, null, null, null, null);
         int i = 0;
@@ -192,8 +193,8 @@ public class DbUtils extends SQLiteOpenHelper
             do {
                 id = cursor.getInt(idId);
                 name = cursor.getString(titleId);
-                desc = cursor.getString(descId);
-                category = new Category(id, name, desc);
+             //   desc = cursor.getString(descId);
+                category = new Category(id, name);
                 result.add(category);
                 i++;
             }
@@ -264,7 +265,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues.put(END_TIME, calendar.getTimeInMillis());
         contentValues.put(TIME_SEGMENT, 10);
         contentValues.put(DESCRIPTION, "asdf");
-        database.insert(RECORD_TABLE, null, contentValues);
+        database.insert(RECORD, null, contentValues);
 
         ContentValues contentValues1 = new ContentValues();
         contentValues1.put(CATEGORY_ID_REF, 1);
@@ -274,7 +275,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues1.put(END_TIME, calendar.getTimeInMillis());
         contentValues1.put(TIME_SEGMENT, 10);
         contentValues1.put(DESCRIPTION, "efef");
-        database.insert(RECORD_TABLE, null, contentValues1);
+        database.insert(RECORD, null, contentValues1);
 
         ContentValues contentValues2 = new ContentValues();
         contentValues2.put(CATEGORY_ID_REF, 1);
@@ -284,7 +285,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues2.put(END_TIME, calendar.getTimeInMillis());
         contentValues2.put(TIME_SEGMENT, 10);
         contentValues2.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD_TABLE, null, contentValues2);
+        database.insert(RECORD, null, contentValues2);
 
         ContentValues contentValues3 = new ContentValues();
         contentValues3.put(CATEGORY_ID_REF, 2);
@@ -294,7 +295,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues3.put(END_TIME, calendar.getTimeInMillis());
         contentValues3.put(TIME_SEGMENT, 50);
         contentValues3.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD_TABLE, null, contentValues3);
+        database.insert(RECORD, null, contentValues3);
 
         ContentValues contentValues4 = new ContentValues();
         contentValues4.put(CATEGORY_ID_REF, 3);
@@ -304,7 +305,7 @@ public class DbUtils extends SQLiteOpenHelper
         contentValues4.put(END_TIME, calendar.getTimeInMillis());
         contentValues4.put(TIME_SEGMENT, 5);
         contentValues4.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD_TABLE, null, contentValues4);
+        database.insert(RECORD, null, contentValues4);
     }
 
     public ArrayList<Category> parseCursor(Cursor cursor) {
@@ -322,7 +323,7 @@ public class DbUtils extends SQLiteOpenHelper
                 id = cursor.getInt(idId);
                 title = cursor.getString(categoryId);
             //    desc = cursor.getString(descId);
-                category = new Category(id, title, "");
+                category = new Category(id, title);
                 listCategories.add(category);
                 i++;
             }

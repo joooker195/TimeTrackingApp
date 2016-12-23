@@ -27,7 +27,6 @@ public class AddCategoriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_categories);
 
         mTitle = (EditText) findViewById(R.id.title_category);
-      //  mDesc = (EditText) findViewById(R.id.desc_category);
         mAddButton = (Button) findViewById(R.id.add_category_button);
 
         utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
@@ -48,9 +47,9 @@ public class AddCategoriesActivity extends AppCompatActivity {
     public void addCategory()
     {
         String title = mTitle.getText().toString();
-        utils.insertCategories(database,new Category(title, ""));
+        utils.insertCategories(database,new Category(title));
         Intent intent = new Intent();
-        intent.putExtra("cat",new Category(title, ""));
+        intent.putExtra("cat",new Category(title));
         setResult(RESULT_OK, intent);
         finish();
     }
