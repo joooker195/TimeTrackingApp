@@ -22,7 +22,7 @@ import com.timetrackingapp.db.DbUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class RecordActivity extends AppCompatActivity implements Comparable{
+public class AddRecordActivity extends AppCompatActivity implements Comparable{
 
     public static String TITLE = "";
 
@@ -118,10 +118,10 @@ public class RecordActivity extends AppCompatActivity implements Comparable{
 
     private void onClickTimePicker(final EditText editTime) {
 
-        LayoutInflater layoutInflater = LayoutInflater.from(RecordActivity.this);
+        LayoutInflater layoutInflater = LayoutInflater.from(AddRecordActivity.this);
         final View promptView = layoutInflater.inflate(R.layout.content_time_picker_activity, null);
         mTimePicker = (TimePicker) promptView.findViewById(R.id.tp);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RecordActivity.this);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AddRecordActivity.this);
         alertDialogBuilder.setTitle("Выберите время");
         alertDialogBuilder.setView(promptView);
         alertDialogBuilder.setCancelable(false)

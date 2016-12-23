@@ -19,10 +19,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddCategoriesActivity" />
-        <activity android:name=".RecordActivity" />
+        <activity android:name=".AddRecordActivity" />
         <activity android:name=".RecordListActivity" />
         <activity android:name=".StatisticActivity" />
-        <activity android:name=".StatisticRecordActivity"></activity>
+        <activity android:name=".StatisticRecordActivity" />
+        <activity android:name=".CreatePhotoActivity"></activity>
     </application>
 
 </manifest>

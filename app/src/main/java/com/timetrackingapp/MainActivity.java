@@ -98,7 +98,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_make_photo)
         {
-
+            Intent intent = new Intent(MainActivity.this, CreatePhotoActivity.class);
+            startActivity(intent);
         }
         else
         if (id == R.id.nav_records)

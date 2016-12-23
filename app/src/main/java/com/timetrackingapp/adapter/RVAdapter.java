@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.timetrackingapp.R;
-import com.timetrackingapp.RecordActivity;
+import com.timetrackingapp.AddRecordActivity;
 import com.timetrackingapp.classes.Category;
 
 import java.util.ArrayList;
@@ -46,9 +46,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CategoryViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RecordActivity.TITLE = categories.get(position).getTitle();
+                AddRecordActivity.TITLE = categories.get(position).getTitle();
 
-                Intent intent= new Intent(context, RecordActivity.class);
+                Intent intent= new Intent(context, AddRecordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }

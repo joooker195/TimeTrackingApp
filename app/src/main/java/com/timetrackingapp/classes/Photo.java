@@ -13,6 +13,10 @@ public class Photo implements Serializable
     private String name;
     private Bitmap image;
 
+    public Photo(Bitmap image) {
+        this.image = image;
+    }
+
     public Photo(int id, Bitmap image) {
         this.id = id;
         this.image = image;
