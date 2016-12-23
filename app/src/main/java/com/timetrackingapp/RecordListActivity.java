@@ -29,10 +29,8 @@ public class RecordListActivity extends AppCompatActivity {
         mListRecord = (ListView) findViewById(R.id.record_list_view);
         utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
         database = utils.getWritableDatabase();//дает бд на запись
-        // utils.initTimeTable(null,database);//забиваю бд данными
         allRecords = utils.getRecords(database);
-        adapter = new RecordAdapter(this,R.layout.record_row,allRecords);
-      //  mListRecord.setOnItemClickListener(RecordListActivity.this);
+        adapter = new RecordAdapter(this,R.layout.content_record_row,allRecords);
         mListRecord.setAdapter(adapter);
 
     }

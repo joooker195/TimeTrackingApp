@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".AddCategoriesActivity" />
         <activity android:name=".RecordActivity" />
-        <activity android:name=".RecordListActivity"></activity>
+        <activity android:name=".RecordListActivity" />
+        <activity android:name=".StatisticActivity"></activity>
     </application>
 
 </manifest>

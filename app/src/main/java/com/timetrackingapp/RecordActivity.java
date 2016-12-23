@@ -118,7 +118,7 @@ public class RecordActivity extends AppCompatActivity implements Comparable{
     private void onClickTimePicker(final EditText editTime) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(RecordActivity.this);
-        final View promptView = layoutInflater.inflate(R.layout.time_picker_activity, null);
+        final View promptView = layoutInflater.inflate(R.layout.content_time_picker_activity, null);
         mTimePicker = (TimePicker) promptView.findViewById(R.id.tp);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RecordActivity.this);
         alertDialogBuilder.setTitle("Выберите время");

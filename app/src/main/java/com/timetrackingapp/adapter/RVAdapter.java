@@ -32,7 +32,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CategoryViewHolder
 
     @Override
     public RVAdapter.CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View mVewCard = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_row, parent, false);
+        final View mVewCard = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_category_row, parent, false);
         CategoryViewHolder mCategoryViewHolder = new CategoryViewHolder(mVewCard);
 
         return mCategoryViewHolder;
