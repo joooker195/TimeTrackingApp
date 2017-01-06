@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Category> listCategories = new ArrayList<>();
 
     private RecyclerView mCategories;
+    private RVAdapter mAdapter;
 
 
 
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity
         initDb();
         getCategories();
         //----------
+        mAdapter.notifyDataSetChanged();
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity
 
             finish();
             this.startActivity(new Intent(this, this.getClass()));
+       //     mAdapter.notifyDataSetChanged();
         }
 
         return super.onOptionsItemSelected(item);
@@ -143,9 +146,8 @@ public class MainActivity extends AppCompatActivity
 
     public void getCategories()
     {
-
         listCategories = utils.parseCursor(utils.getAllRecords(database,DbUtils.CATEGORY_TABLE));
-        RVAdapter mAdapter = new RVAdapter(listCategories, MainActivity.this);
+        mAdapter = new RVAdapter(listCategories, MainActivity.this);
         mCategories.setAdapter(mAdapter);
 
     }

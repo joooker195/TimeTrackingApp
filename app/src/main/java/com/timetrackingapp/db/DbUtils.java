@@ -382,15 +382,15 @@ public class DbUtils extends SQLiteOpenHelper
     /**Каскадное удаление категории*/
     public void deleteCascadeCategory(SQLiteDatabase database,Category category){
         int res =  database.delete (CATEGORY_TABLE, CATEGORY_TITLE+"=?", new String[] {category.getTitle()});
-        sqlQuery = "select "+TIME_ID+" from "+RECORD+" where "+CATEGORY_ID_REF+ " = ?";
+        sqlQuery = "select "+DESCRIPTION+" from "+RECORD+" where "+CATEGORY_ID_REF+ " = ?";
         Cursor cursor = database.rawQuery(sqlQuery,new String[]{String.valueOf(category.getId())},null);
         cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(TIME_ID);
-        int idValue;//значение id
+        int descx = cursor.getColumnIndex(DESCRIPTION);
+        String desc;
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                idValue = cursor.getInt(idx);
-                int i =  deleteTimeRecord(database,idValue);
+                desc = cursor.getString(descx);
+                int i =  deleteRecord(database,desc);
             }
             while (cursor.moveToNext());
         }
@@ -404,6 +404,33 @@ public class DbUtils extends SQLiteOpenHelper
 
     public int deleteRecord(SQLiteDatabase database, String desc){
         int res =  database.delete (RECORD, DESCRIPTION+"=?", new String[] {desc});
+        return res;
+    }
+
+    public void deleteCascadePhoto(SQLiteDatabase database,Photo photo){
+        ArrayList<Integer> removedCategoryIds = new ArrayList<>();
+        deleteEntity(database,DbUtils.PHOTO_TABLE,DbUtils.PHOTO_ID,new String[]{String.valueOf(photo.getId())});
+        sqlQuery = "select * from "+TIME_PHOTO_TABLE+" where "+PHOTO_ID_REF+" ="+String.valueOf(photo.getId());
+        Cursor cursor = database.rawQuery(sqlQuery,null,null);
+        deleteEntity(database,TIME_PHOTO_TABLE,PHOTO_ID_REF,new String[]{String.valueOf(photo.getId())});
+        cursor.moveToFirst();
+        int catIdIdx = cursor.getColumnIndex(TIME_ID_REF);
+        int categoryIdValue;
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                categoryIdValue = cursor.getInt(catIdIdx);
+                removedCategoryIds.add(categoryIdValue);
+            }
+            while (cursor.moveToNext());
+        }
+        for (int id:removedCategoryIds){
+            deleteTimeRecord(database,id);
+        }
+        cursor.close();
+    }
+
+    public int deleteEntity(SQLiteDatabase database,String table,String causeColumn,String[] causeArgs){
+        int res =  database.delete (table, causeColumn+"=?", causeArgs);
         return res;
     }
 
