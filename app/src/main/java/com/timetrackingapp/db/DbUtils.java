@@ -35,7 +35,6 @@ public class DbUtils extends SQLiteOpenHelper
     //Константы для полей таблицы "Категория"
     public static final String CATEGORY_ID = "ID";
     public static final String CATEGORY_TITLE = "CATEGORY_TITLE";
-    public static final String CATEGORY_DESC = "CATEGORY_DESC";
 
     //таблица развязка между временем и категорией
     public static final String TIME_ID_REF = "time_id_ref";
@@ -100,17 +99,6 @@ public class DbUtils extends SQLiteOpenHelper
         insertCategories(sqLiteDatabase,new Category("Обед"));
         insertCategories(sqLiteDatabase,new Category("Отдых"));
         insertCategories(sqLiteDatabase,new Category("Сон"));
-
-        //инициализируем развязку
-  /*      ContentValues contentValues = new ContentValues();
-        contentValues.put(TIME_ID_REF,1);
-        contentValues.put(PHOTO_ID_REF,1);
-        long res = sqLiteDatabase.insert(TIME_PHOTO_TABLE,null,contentValues);
-
-    /*    ContentValues cv = new ContentValues();
-        cv.put(TIME_ID_REF,1);
-        cv.put(PHOTO_ID_REF,2);
-        res = sqLiteDatabase.insert(TIME_PHOTO_TABLE,null,cv);*/
     }
 
     @Override
@@ -135,7 +123,7 @@ public class DbUtils extends SQLiteOpenHelper
         int i = 0;
         int idId,descriptionId,startDateId,endDateId,segmentId,categoryId;
         int idRec,idCat;
-        long begin,end, segment;
+        long begin,end,segment;
         String desc, titleCat;
         Cursor cursor = getAllRecords(database,RECORD);
         if (cursor != null && cursor.moveToFirst()) {
@@ -166,22 +154,16 @@ public class DbUtils extends SQLiteOpenHelper
 
     public List<Photo> getPhotoListByTimeRecordId(SQLiteDatabase database,int TimeId) {
         List<Photo> photosByCategory = new LinkedList<>();
-      //  Cursor cursor = database.query(TIME_PHOTO_TABLE, null, TIME_ID_REF + "=?", new String[]{String.valueOf(TimeId)}, null, null, null);
         Cursor cursor = database.query(TIME_PHOTO_TABLE, null, TIME_ID_REF + "="+ String.valueOf(TimeId-1), null, null, null, null);
-        int idCategoryIdx;
         int idPhotoIdx;
-        int i = 0;
         Photo photo;
-        int idValCategory,idValProtoID;
+        int idValProtoID;
         if (cursor != null && cursor.moveToFirst()) {
-            idCategoryIdx = cursor.getColumnIndex(DbUtils.TIME_ID_REF);
             idPhotoIdx = cursor.getColumnIndex(DbUtils.PHOTO_ID_REF);
             do {
-                idValCategory = cursor.getInt(idCategoryIdx);
                 idValProtoID = cursor.getInt(idPhotoIdx);
                 photo = getPhotoById(database,idValProtoID);
                 photosByCategory.add(photo);
-                i++;
             }
             while (cursor.moveToNext());
             cursor.close();
@@ -191,10 +173,8 @@ public class DbUtils extends SQLiteOpenHelper
 
     public Photo getPhotoById(SQLiteDatabase database,int id){
         Photo photo = null;
-        int i = 0;
         Bitmap bmp;
         int idCat;
-      //  Cursor cursor = database.query(PHOTO_TABLE,null,PHOTO_ID+"=?",new String[]{String.valueOf(id)},null,null,null);
         Cursor cursor = database.query(PHOTO_TABLE,null,PHOTO_ID+"="+String.valueOf(id),null,null,null,null);
         if (cursor != null && cursor.moveToFirst()) {
             int idIdx = cursor.getColumnIndex(DbUtils.PHOTO_ID);
@@ -203,7 +183,6 @@ public class DbUtils extends SQLiteOpenHelper
                 idCat = cursor.getInt(idIdx);
                 bmp = DbBitmapUtils.getImage(cursor.getBlob(photoIdx));
                 photo = new Photo(bmp,idCat);
-                i++;
             }
             while (cursor.moveToNext());
             cursor.close();
@@ -265,7 +244,7 @@ public class DbUtils extends SQLiteOpenHelper
     public void insertCategories(SQLiteDatabase database, Category data){
         ContentValues contentValues = new ContentValues();
         contentValues.put(CATEGORY_TITLE,data.getTitle());
-     //   contentValues.put(CATEGORY_DESC,data.getDesc());
+
         database.beginTransaction();
         long res =  database.insert(DbUtils.CATEGORY_TABLE, null, contentValues);
         Log.d(LOG_TAG,"InsertResult "+res);
@@ -273,15 +252,9 @@ public class DbUtils extends SQLiteOpenHelper
         database.endTransaction();
     }
 
-    public int update(SQLiteDatabase database,String tableName,ContentValues contentValues,String fieldCause, String[] whereArgs)
-    {
-        int updCount = database.update(tableName, contentValues, fieldCause+"= ?", whereArgs);
-        return updCount;
-    }
-
     public int getIdCategoryByName(String name,SQLiteDatabase database){
         int res = 0;
-        for (Category c: getCategories(database,CATEGORY_TABLE)){
+        for (Category c: getAllCategories(database)){
             if(c.getTitle().equals(name)){
                 res = c.getId();
                 break;
@@ -310,7 +283,6 @@ public class DbUtils extends SQLiteOpenHelper
     private List<Category> getCategories(SQLiteDatabase database, String table){
         List<Category> result = new LinkedList<>();
         Cursor cursor = database.query(table, null,null, null, null, null, null);
-        int i = 0;
         String name;
         int id;
         Category category;
@@ -322,7 +294,6 @@ public class DbUtils extends SQLiteOpenHelper
                 name = cursor.getString(titleId);
                 category = new Category(id, name);
                 result.add(category);
-                i++;
             }
             while (cursor.moveToNext());
             cursor.close();
@@ -341,21 +312,19 @@ public class DbUtils extends SQLiteOpenHelper
     public List<Photo> getAllPhoto(SQLiteDatabase database){
         List<Photo> res = new LinkedList<>();
         Cursor cursor = getAllRecords(database,PHOTO_TABLE);
-        int idId;
-        int i = 0;
-        int imageId;
+        int idIdx;
+        int imageIdx;
         Photo photo;
         int id;
         Bitmap bitmap;
         if (cursor != null && cursor.moveToFirst()) {
-            idId = cursor.getColumnIndex(PHOTO_ID);
-            imageId = cursor.getColumnIndex(IMAGE);
+            idIdx = cursor.getColumnIndex(PHOTO_ID);
+            imageIdx = cursor.getColumnIndex(IMAGE);
             do {
-                id = cursor.getInt(idId);
-                bitmap =DbBitmapUtils.getImage(cursor.getBlob(imageId));
+                id = cursor.getInt(idIdx);
+                bitmap =DbBitmapUtils.getImage(cursor.getBlob(imageIdx));
                 photo = new Photo(id, bitmap);
                 res.add(photo);
-                i++;
             }
             while (cursor.moveToNext());
             cursor.close();
@@ -368,17 +337,14 @@ public class DbUtils extends SQLiteOpenHelper
         ArrayList<Category> listCategories = new ArrayList<>();
         String title;
         int id;
-        String desc;
         Category category;
         int i = 0;
         if (cursor != null && cursor.moveToFirst()) {
             int idId = cursor.getColumnIndex(DbUtils.CATEGORY_ID);
             int categoryId = cursor.getColumnIndex(DbUtils.CATEGORY_TITLE);
-            int descId = cursor.getColumnIndex(DbUtils.CATEGORY_DESC);
             do {
                 id = cursor.getInt(idId);
                 title = cursor.getString(categoryId);
-            //    desc = cursor.getString(descId);
                 category = new Category(id, title);
                 listCategories.add(category);
                 i++;
@@ -412,13 +378,29 @@ public class DbUtils extends SQLiteOpenHelper
         return res;
     }
 
-    public int getCountRecordFromCategory(SQLiteDatabase database,Category category,long startDate,long endDate){
-        int res = 0;
-        sqlQuery = "select * from "+RECORD+" where "+CATEGORY_ID_REF+" ="+String.valueOf(category.getId()+" and "+START_TIME+" between "+startDate+" and "+endDate);
-        Cursor cursor = database.rawQuery(sqlQuery,null,null);
-        res = cursor.getCount();
+
+    /**Каскадное удаление категории*/
+    public void deleteCascadeCategory(SQLiteDatabase database,Category category){
+        int res =  database.delete (CATEGORY_TABLE, CATEGORY_TITLE+"=?", new String[] {category.getTitle()});
+        sqlQuery = "select "+TIME_ID+" from "+RECORD+" where "+CATEGORY_ID_REF+ " = ?";
+        Cursor cursor = database.rawQuery(sqlQuery,new String[]{String.valueOf(category.getId())},null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(TIME_ID);
+        int idValue;//значение id
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                idValue = cursor.getInt(idx);
+                int i =  deleteTimeRecord(database,idValue);
+            }
+            while (cursor.moveToNext());
+        }
         cursor.close();
+    }
+
+    public int deleteTimeRecord(SQLiteDatabase database, int recordId){
+        int res =  database.delete(RECORD, TIME_ID+"="+recordId, null);
         return res;
     }
+
 
 }

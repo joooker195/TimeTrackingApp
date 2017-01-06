@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by Ксю on 23.12.2016.
  */
-public class PhotoAdapterCamera extends BaseAdapter {
+public class PhotoCameraAdapter extends BaseAdapter {
 
     private List<Photo> data;
     private LayoutInflater layoutInflater;
@@ -23,11 +23,11 @@ public class PhotoAdapterCamera extends BaseAdapter {
     private  int LayResId;
     private LayoutInflater inflater;
 
-    public PhotoAdapterCamera(){
+    public PhotoCameraAdapter(){
 
     }
 
-    public PhotoAdapterCamera(Context context, int resource, List<Photo> objects) {
+    public PhotoCameraAdapter(Context context, int resource, List<Photo> objects) {
         this.ctx =context;
         this.LayResId = resource;
         this.data = objects;

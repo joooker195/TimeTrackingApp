@@ -9,6 +9,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.timetrackingapp.adapter.CustomPhotoAdapter;
+import com.timetrackingapp.classes.Category;
 import com.timetrackingapp.classes.Photo;
 import com.timetrackingapp.classes.Record;
 import com.timetrackingapp.db.DbUtils;
@@ -45,6 +48,7 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
 
     private List<Photo> allPhoto = new ArrayList<>();
     private List<Photo> selectedListPhotos = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();
     private CustomPhotoAdapter customPhotoAdapter;
     private Photo selectedPhoto;
 
@@ -198,5 +202,39 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         String time = timeHour + ":" + timeMinute;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         return simpleDateFormat.parse(time).getTime();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.categories_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.category_del) {
+            String title = mTitle.getText().toString();
+
+            categories = utils.getAllCategories(database);
+            for(Category c: categories)
+            {
+                if(c.getTitle().equals(title)) {
+                    utils.deleteCascadeCategory(database, c);
+                    break;
+                }
+            }
+            Intent intent= new Intent(AddRecordActivity.this, AddRecordActivity.class);
+            intent.removeExtra("cat");
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

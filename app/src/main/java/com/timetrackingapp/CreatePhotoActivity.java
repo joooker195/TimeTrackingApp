@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.timetrackingapp.adapter.PhotoAdapterCamera;
+import com.timetrackingapp.adapter.PhotoCameraAdapter;
 import com.timetrackingapp.classes.Photo;
 import com.timetrackingapp.db.DbUtils;
 
@@ -20,7 +20,7 @@ public class CreatePhotoActivity extends AppCompatActivity {
 
     private final int CAMERA_RESULT_ADD = 0;
     private List<Photo> allPhoto = new ArrayList<>();
-    private PhotoAdapterCamera adapter;
+    private PhotoCameraAdapter adapter;
     private SQLiteDatabase database;
     private DbUtils utils;
 
@@ -37,7 +37,7 @@ public class CreatePhotoActivity extends AppCompatActivity {
         database = utils.getWritableDatabase();
 
         allPhoto = utils.getAllPhoto(database);
-        adapter = new PhotoAdapterCamera(this,R.layout.content_photo,allPhoto);
+        adapter = new PhotoCameraAdapter(this,R.layout.content_photo,allPhoto);
         mListPhoto.setAdapter(adapter);
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

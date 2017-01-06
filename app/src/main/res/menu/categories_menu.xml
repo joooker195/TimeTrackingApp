@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/restart"
+        android:id="@+id/category_del"
         android:orderInCategory="100"
-        android:title="Обновить"
-        android:icon="@drawable/ic_restart_white"
+        android:title="Удалить категорию"
+        android:icon="@drawable/ic_clear_white_24dp"
         app:showAsAction="always" />
 
 </menu>
