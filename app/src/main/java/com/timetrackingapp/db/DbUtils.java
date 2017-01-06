@@ -398,7 +398,12 @@ public class DbUtils extends SQLiteOpenHelper
     }
 
     public int deleteTimeRecord(SQLiteDatabase database, int recordId){
-        int res =  database.delete(RECORD, TIME_ID+"="+recordId, null);
+        int res =  database.delete (RECORD, DESCRIPTION+"=?", new String[] {String.valueOf(recordId)});
+        return res;
+    }
+
+    public int deleteRecord(SQLiteDatabase database, String desc){
+        int res =  database.delete (RECORD, DESCRIPTION+"=?", new String[] {desc});
         return res;
     }
 
