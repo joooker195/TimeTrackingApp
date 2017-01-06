@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.timetrackingapp.classes.Category;
@@ -103,15 +102,15 @@ public class DbUtils extends SQLiteOpenHelper
         insertCategories(sqLiteDatabase,new Category("Сон"));
 
         //инициализируем развязку
-        ContentValues contentValues = new ContentValues();
+  /*      ContentValues contentValues = new ContentValues();
         contentValues.put(TIME_ID_REF,1);
         contentValues.put(PHOTO_ID_REF,1);
         long res = sqLiteDatabase.insert(TIME_PHOTO_TABLE,null,contentValues);
 
-        ContentValues cv = new ContentValues();
+    /*    ContentValues cv = new ContentValues();
         cv.put(TIME_ID_REF,1);
         cv.put(PHOTO_ID_REF,2);
-        res = sqLiteDatabase.insert(TIME_PHOTO_TABLE,null,cv);
+        res = sqLiteDatabase.insert(TIME_PHOTO_TABLE,null,cv);*/
     }
 
     @Override
@@ -140,7 +139,7 @@ public class DbUtils extends SQLiteOpenHelper
         String desc, titleCat;
         Cursor cursor = getAllRecords(database,RECORD);
         if (cursor != null && cursor.moveToFirst()) {
-            idId = cursor.getColumnIndex(CATEGORY_ID);
+            idId = cursor.getColumnIndex(TIME_ID);
             descriptionId = cursor.getColumnIndex(DESCRIPTION);
             startDateId = cursor.getColumnIndex(START_TIME);
             endDateId = cursor.getColumnIndex(END_TIME);
@@ -167,13 +166,13 @@ public class DbUtils extends SQLiteOpenHelper
 
     public List<Photo> getPhotoListByTimeRecordId(SQLiteDatabase database,int TimeId) {
         List<Photo> photosByCategory = new LinkedList<>();
-        Cursor cursor = database.query(TIME_PHOTO_TABLE, null, TIME_ID_REF + "=?", new String[]{String.valueOf(TimeId)}, null, null, null);
+      //  Cursor cursor = database.query(TIME_PHOTO_TABLE, null, TIME_ID_REF + "=?", new String[]{String.valueOf(TimeId)}, null, null, null);
+        Cursor cursor = database.query(TIME_PHOTO_TABLE, null, TIME_ID_REF + "="+ String.valueOf(TimeId-1), null, null, null, null);
         int idCategoryIdx;
         int idPhotoIdx;
         int i = 0;
         Photo photo;
         int idValCategory,idValProtoID;
-        boolean state = cursor.moveToFirst();
         if (cursor != null && cursor.moveToFirst()) {
             idCategoryIdx = cursor.getColumnIndex(DbUtils.TIME_ID_REF);
             idPhotoIdx = cursor.getColumnIndex(DbUtils.PHOTO_ID_REF);
@@ -195,7 +194,8 @@ public class DbUtils extends SQLiteOpenHelper
         int i = 0;
         Bitmap bmp;
         int idCat;
-        Cursor cursor = database.query(PHOTO_TABLE,null,PHOTO_ID+"=?",new String[]{String.valueOf(id)},null,null,null);
+      //  Cursor cursor = database.query(PHOTO_TABLE,null,PHOTO_ID+"=?",new String[]{String.valueOf(id)},null,null,null);
+        Cursor cursor = database.query(PHOTO_TABLE,null,PHOTO_ID+"="+String.valueOf(id),null,null,null,null);
         if (cursor != null && cursor.moveToFirst()) {
             int idIdx = cursor.getColumnIndex(DbUtils.PHOTO_ID);
             int photoIdx = cursor.getColumnIndex(DbUtils.IMAGE);
@@ -216,14 +216,43 @@ public class DbUtils extends SQLiteOpenHelper
         return res;
     }
 
+    //беерт id у последней записси, что вставить его в развязку
+    public int getNextId(SQLiteDatabase database){
+        int res = 0;
+        sqlQuery="SELECT * FROM "+RECORD+" WHERE " +TIME_ID+" = (SELECT MAX("+TIME_ID+")  FROM "+RECORD+")";
+        Cursor cursor = database.rawQuery(sqlQuery,null);
+        int idIdx;
+        int IdVal = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            idIdx = cursor.getColumnIndex(DbUtils.TIME_ID);
+            IdVal = cursor.getInt(idIdx);
+        }
+        res = IdVal;
+        cursor.close();
+        return  res;
+    }
+
     public void insertRecord(SQLiteDatabase database, Record data)
     {
         ContentValues contentValues = new ContentValues();
+        ContentValues cvR;
         contentValues.put(DESCRIPTION, data.getDesc());
         contentValues.put(START_TIME, data.getBegin());
         contentValues.put(END_TIME, data.getEnd());
         contentValues.put(TIME_SEGMENT, data.getInterval());
         contentValues.put(CATEGORY_ID_REF, data.getCategoryRef());
+
+        cvR = new ContentValues();
+        int id = getNextId(database);
+        cvR.put(TIME_ID_REF, id);
+
+        List<Photo> photos = data.getPhotos();
+        for (Photo p : photos) {
+            cvR.put(PHOTO_ID_REF, p.getId());
+        }
+
+     //   contentValues.put(TIME_ID, id);
+        database.insert(DbUtils.TIME_PHOTO_TABLE, null, cvR);
         database.beginTransaction();
         long res =  database.insert(DbUtils.RECORD, null, contentValues);
         Log.d(LOG_TAG,"InsertResult "+res);
@@ -301,13 +330,6 @@ public class DbUtils extends SQLiteOpenHelper
         return result;
     }
 
-    public void initPhotoTable(SQLiteDatabase database,int resID,Context ctx){
-        Bitmap icon = BitmapFactory.decodeResource(ctx.getResources(), resID);
-        byte[] image = DbBitmapUtils.getBytes(icon);
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(IMAGE,image);
-        insertData(database,contentValues,PHOTO_TABLE);
-    }
 
     public void insertCameraImage(SQLiteDatabase database, Bitmap bitmap){
         byte[] image = DbBitmapUtils.getBytes(bitmap);
@@ -341,69 +363,6 @@ public class DbUtils extends SQLiteOpenHelper
         return  res;
     }
 
-    public int deleteEntity(SQLiteDatabase database,String table,String causeColumn,String[] causeArgs)
-    {
-        int res =  database.delete (table, causeColumn+"=?", causeArgs);
-        return res;
-    }
-
-    public void deleteRazvByPhoto(Photo photo){
-        sqlQuery = "";
-    }
-
-    //Вставляет записи в таблицу времени
-    public void initRecordTable(Record record, SQLiteDatabase database) {
-        calendar = Calendar.getInstance();
-        calendar.set(2016, 0, 5, 1, 0);
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(CATEGORY_ID_REF, 1);
-        contentValues.put(START_TIME, calendar.getTimeInMillis());
-        calendar.set(2016, 0, 31);
-        contentValues.put(END_TIME, calendar.getTimeInMillis());
-        contentValues.put(TIME_SEGMENT, 10);
-        contentValues.put(DESCRIPTION, "asdf");
-        database.insert(RECORD, null, contentValues);
-
-        ContentValues contentValues1 = new ContentValues();
-        contentValues1.put(CATEGORY_ID_REF, 1);
-        calendar.set(2016, 1, 1, 1, 0);
-        contentValues1.put(START_TIME, calendar.getTimeInMillis());
-        calendar.set(2016, 4, 1, 1, 0);
-        contentValues1.put(END_TIME, calendar.getTimeInMillis());
-        contentValues1.put(TIME_SEGMENT, 10);
-        contentValues1.put(DESCRIPTION, "efef");
-        database.insert(RECORD, null, contentValues1);
-
-        ContentValues contentValues2 = new ContentValues();
-        contentValues2.put(CATEGORY_ID_REF, 1);
-        calendar.set(2016, 2, 21, 1, 0);
-        contentValues2.put(START_TIME, calendar.getTimeInMillis());
-        calendar.set(2016, 3, 21, 1, 0);
-        contentValues2.put(END_TIME, calendar.getTimeInMillis());
-        contentValues2.put(TIME_SEGMENT, 10);
-        contentValues2.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD, null, contentValues2);
-
-        ContentValues contentValues3 = new ContentValues();
-        contentValues3.put(CATEGORY_ID_REF, 2);
-        calendar.set(2016, 2, 21, 1, 0);
-        contentValues3.put(START_TIME, calendar.getTimeInMillis());
-        calendar.set(2016, 3, 21, 1, 0);
-        contentValues3.put(END_TIME, calendar.getTimeInMillis());
-        contentValues3.put(TIME_SEGMENT, 50);
-        contentValues3.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD, null, contentValues3);
-
-        ContentValues contentValues4 = new ContentValues();
-        contentValues4.put(CATEGORY_ID_REF, 3);
-        calendar.set(2016, 2, 21, 1, 0);
-        contentValues4.put(START_TIME, calendar.getTimeInMillis());
-        calendar.set(2016, 3, 21, 1, 0);
-        contentValues4.put(END_TIME, calendar.getTimeInMillis());
-        contentValues4.put(TIME_SEGMENT, 5);
-        contentValues4.put(DESCRIPTION, "rgrg");
-        database.insert(RECORD, null, contentValues4);
-    }
 
     public ArrayList<Category> parseCursor(Cursor cursor) {
         ArrayList<Category> listCategories = new ArrayList<>();

@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         }
         else
         if (id == R.id.nav_about) {
-
+            this.deleteDatabase(DbUtils.DATABASE_NAME);//программмно удаляет б
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity
 
     public void initDb()
     {
-      //  this.deleteDatabase(DbUtils.DATABASE_NAME);//программмно удаляет б
+
         utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
         database = utils.getWritableDatabase();//дает бд на запись
 

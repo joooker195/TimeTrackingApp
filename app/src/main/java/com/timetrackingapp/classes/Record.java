@@ -15,6 +15,7 @@ public class Record implements Serializable
     private long end;
     private int categoryRef;
     private List<Photo> photos;
+    private List<String> photosId;
     private String categoryTitle;
 
     public int getCategoryRef() {
@@ -50,6 +51,14 @@ public class Record implements Serializable
         this.desc = desc;
     }
 
+    public List<String> getPhotosId() {
+        return photosId;
+    }
+
+    public void setPhotosId(List<String> photosId) {
+        this.photosId = photosId;
+    }
+
     public Record(String desc, long interval, long begin, long end, int category, String categoryTitle, List<Photo> photos) {
         this.desc = desc;
         this.interval = interval;
@@ -58,6 +67,7 @@ public class Record implements Serializable
         this.categoryRef = category;
         this.photos = photos;
         this.categoryTitle = categoryTitle;
+
     }
 
     public String getCategoryTitle() {

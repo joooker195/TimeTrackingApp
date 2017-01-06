@@ -111,6 +111,8 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
 
         customPhotoAdapter = new CustomPhotoAdapter(AddRecordActivity.this, R.layout.content_photo, allPhoto);
         mPhotoSpinner.setAdapter(customPhotoAdapter);
+
+
         mPhotoSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -134,11 +136,13 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         idCategoryRef = utils.getIdCategoryByName(title, database);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-        long interval = end - begin - simpleDateFormat.parse("3:00").getTime();
+        long interval = 60;
       //  simpleDateFormat.
 
        // Record record = new Record(desc, interval, begin, end, idCategoryRef);
-        utils.insertRecord(database, new Record(desc, 12, begin, end, idCategoryRef, "", allPhoto));
+
+
+        utils.insertRecord(database, new Record(desc, interval, begin, end, idCategoryRef, "", selectedListPhotos));
         Intent intent = new Intent();
         intent.putExtra("rec",new Record(desc, interval, begin, end, idCategoryRef));
         setResult(RESULT_OK, intent);
