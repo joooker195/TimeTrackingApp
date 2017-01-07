@@ -73,6 +73,7 @@ public class RecordListActivity extends AppCompatActivity {
 
             Intent intent = new Intent(RecordListActivity.this, UpdateRecordActivity.class);
             startActivity(intent);
+            finish();
 
             adapter.notifyDataSetChanged();
         }

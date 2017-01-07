@@ -77,8 +77,7 @@ public class RecordAdapter extends BaseAdapter {
         endTime.setText(endTime.getText() + dfISO.format(date));
 
         TextView segment = (TextView) row.findViewById(R.id.record_row_interval);
-        date = new Date(record.getInterval());
-        segment.setText(segment.getText() + dfISO.format(date));
+        segment.setText(segment.getText() + String.valueOf(record.getInterval()));
 
         LinearLayout linearLayout = (LinearLayout) row.findViewById(R.id.photos_layout);
         for (Photo photo:record.getPhotos()){

@@ -29,6 +29,7 @@ import com.timetrackingapp.db.DbUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class AddRecordActivity extends AppCompatActivity implements Comparable{
@@ -139,12 +140,7 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
 
         idCategoryRef = utils.getIdCategoryByName(title, database);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-        long interval = 60;
-      //  simpleDateFormat.
-
-       // Record record = new Record(desc, interval, begin, end, idCategoryRef);
-
+        long interval = getInterval(begin,end);
 
         utils.insertRecord(database, new Record(desc, interval, begin, end, idCategoryRef, "", selectedListPhotos));
         Intent intent = new Intent();
@@ -236,5 +232,34 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public long getInterval(long begin, long end)
+    {
+        long interval;
+        SimpleDateFormat sH = new SimpleDateFormat("HH");
+        SimpleDateFormat sM = new SimpleDateFormat("mm");
+
+        Date dBegin = new Date(begin);
+        Date dEnd = new Date(end);
+
+        String beginH = sH.format(dBegin);
+        String endH = sH.format(dEnd);
+        String beginM = sM.format(dBegin);
+        String endM = sM.format(dEnd);
+
+        long m = Integer.parseInt(endM) - Integer.parseInt(beginM);
+        if(m<0)
+        {
+            m = -m;
+        }
+        int h = Integer.parseInt(endH) - Integer.parseInt(beginH);
+        if(h<0)
+        {
+            h=-h;
+        }
+        interval = h*60+m;
+
+        return interval;
     }
 }

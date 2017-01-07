@@ -27,6 +27,7 @@ import com.timetrackingapp.db.DbUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UpdateRecordActivity extends AppCompatActivity implements Comparable {
@@ -146,7 +147,7 @@ public class UpdateRecordActivity extends AppCompatActivity implements Comparabl
         record.setBegin(begin);
         record.setEnd(end);
         record.setPhotos(allPhoto);
-       // record.setInterval(60);
+        record.setInterval(getInterval(begin,end));
         utils.updateRecord(DESC, record, database);
 
         Intent intent = new Intent(UpdateRecordActivity.this, RecordListActivity.class);
@@ -205,5 +206,34 @@ public class UpdateRecordActivity extends AppCompatActivity implements Comparabl
         String time = timeHour + ":" + timeMinute;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         return simpleDateFormat.parse(time).getTime();
+    }
+
+    public long getInterval(long begin, long end)
+    {
+        long interval;
+        SimpleDateFormat sH = new SimpleDateFormat("HH");
+        SimpleDateFormat sM = new SimpleDateFormat("mm");
+
+        Date dBegin = new Date(begin);
+        Date dEnd = new Date(end);
+
+        String beginH = sH.format(dBegin);
+        String endH = sH.format(dEnd);
+        String beginM = sM.format(dBegin);
+        String endM = sM.format(dEnd);
+
+        long m = Integer.parseInt(endM) - Integer.parseInt(beginM);
+        if(m<0)
+        {
+            m = -m;
+        }
+        int h = Integer.parseInt(endH) - Integer.parseInt(beginH);
+        if(h<0)
+        {
+            h=-h;
+        }
+        interval = h*60+m;
+
+        return interval;
     }
 }
