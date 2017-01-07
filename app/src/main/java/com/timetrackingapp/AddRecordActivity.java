@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.timetrackingapp.adapter.CustomPhotoAdapter;
 import com.timetrackingapp.classes.Category;
@@ -256,7 +257,8 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         int h = Integer.parseInt(endH) - Integer.parseInt(beginH);
         if(h<0)
         {
-            h=-h;
+            Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
+            toast.show();
         }
         interval = h*60+m;
 

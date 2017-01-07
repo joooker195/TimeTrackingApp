@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.timetrackingapp.adapter.CustomPhotoAdapter;
 import com.timetrackingapp.classes.Category;
@@ -210,30 +211,39 @@ public class UpdateRecordActivity extends AppCompatActivity implements Comparabl
 
     public long getInterval(long begin, long end)
     {
-        long interval;
-        SimpleDateFormat sH = new SimpleDateFormat("HH");
-        SimpleDateFormat sM = new SimpleDateFormat("mm");
+        long interval = 0;
+        try {
 
-        Date dBegin = new Date(begin);
-        Date dEnd = new Date(end);
+            SimpleDateFormat sH = new SimpleDateFormat("HH");
+            SimpleDateFormat sM = new SimpleDateFormat("mm");
 
-        String beginH = sH.format(dBegin);
-        String endH = sH.format(dEnd);
-        String beginM = sM.format(dBegin);
-        String endM = sM.format(dEnd);
+            Date dBegin = new Date(begin);
+            Date dEnd = new Date(end);
 
-        long m = Integer.parseInt(endM) - Integer.parseInt(beginM);
-        if(m<0)
-        {
-            m = -m;
+            String beginH = sH.format(dBegin);
+            String endH = sH.format(dEnd);
+            String beginM = sM.format(dBegin);
+            String endM = sM.format(dEnd);
+
+            long m = Integer.parseInt(endM) - Integer.parseInt(beginM);
+            if (m < 0) {
+                m = -m;
+            }
+            int h = Integer.parseInt(endH) - Integer.parseInt(beginH);
+            if (h < 0) {
+                throw new Exception();
+            }
+            interval = h * 60 + m;
+
+            return interval;
         }
-        int h = Integer.parseInt(endH) - Integer.parseInt(beginH);
-        if(h<0)
+        catch (Exception e)
         {
-            h=-h;
+            Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
+            toast.show();
         }
-        interval = h*60+m;
-
-        return interval;
+        finally {
+            return interval;
+        }
     }
 }
