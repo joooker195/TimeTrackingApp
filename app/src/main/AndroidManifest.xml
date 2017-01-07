@@ -23,7 +23,8 @@
         <activity android:name=".RecordListActivity" />
         <activity android:name=".StatisticActivity" />
         <activity android:name=".StatisticRecordActivity" />
-        <activity android:name=".CreatePhotoActivity"></activity>
+        <activity android:name=".CreatePhotoActivity" />
+        <activity android:name=".UpdateRecordActivity"></activity>
     </application>
 
 </manifest>

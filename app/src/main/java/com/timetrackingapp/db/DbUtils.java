@@ -240,6 +240,25 @@ public class DbUtils extends SQLiteOpenHelper
 
     }
 
+    public int updateRecord(String desc, Record data, SQLiteDatabase database){
+        ContentValues contentValues = new ContentValues();
+        ContentValues cvR = new ContentValues();
+        contentValues.put(DESCRIPTION, data.getDesc());
+        contentValues.put(START_TIME, data.getBegin());
+        contentValues.put(END_TIME, data.getEnd());
+        contentValues.put(TIME_SEGMENT, data.getInterval());
+        contentValues.put(CATEGORY_ID_REF, data.getCategoryRef());
+        int updCount =  database.update(RECORD,contentValues,DESCRIPTION+" =?",new String[]{desc});
+
+
+        for(Photo p: data.getPhotos()) {
+            cvR.put(PHOTO_ID_REF, p.getId());
+        }
+        String whereCause = TIME_ID_REF+" =?";
+        int updCountP = database.update(TIME_PHOTO_TABLE,cvR, TIME_ID_REF+" =?",new  String[]{String.valueOf(data.getId())});
+        return updCount;
+    }
+
     //content values вставляет одну запись
     public void insertCategories(SQLiteDatabase database, Category data){
         ContentValues contentValues = new ContentValues();

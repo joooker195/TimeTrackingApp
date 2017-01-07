@@ -1,5 +1,6 @@
 package com.timetrackingapp;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,7 +52,7 @@ public class RecordListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.categories_menu, menu);
+        getMenuInflater().inflate(R.menu.record_menu, menu);
         return true;
     }
 
@@ -61,9 +62,18 @@ public class RecordListActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.category_del) {
+        if (id == R.id.record_del) {
             utils.deleteRecord(database,r.getDesc());
             allRecords.remove(r);
+            adapter.notifyDataSetChanged();
+        }
+        if (id == R.id.record_update) {
+
+            UpdateRecordActivity.DESC = r.getDesc();
+
+            Intent intent = new Intent(RecordListActivity.this, UpdateRecordActivity.class);
+            startActivity(intent);
+
             adapter.notifyDataSetChanged();
         }
 
