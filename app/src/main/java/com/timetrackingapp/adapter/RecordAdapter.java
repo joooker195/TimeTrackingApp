@@ -38,7 +38,7 @@ public class RecordAdapter extends BaseAdapter {
         this.LayResId = resource;
         this.data = objects;
         inflater = (LayoutInflater) context .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        dfISO = new SimpleDateFormat("HH:mm");
+        dfISO = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     }
 
     @Override

@@ -40,6 +40,8 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
     private TextView mTitle;
     private EditText mBegin;
     private EditText mEnd;
+    private EditText mDateBegin;
+    private EditText mDateEnd;
     private EditText mDesc;
     private Button mAddButton;
     private TimePicker mTimePicker;
@@ -70,6 +72,8 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         mTitle = (TextView) findViewById(R.id.cat_title);
         mBegin = (EditText) findViewById(R.id.time_begin);
         mEnd = (EditText) findViewById(R.id.time_end);
+        mDateBegin = (EditText) findViewById(R.id.date_begin);
+        mDateEnd = (EditText) findViewById(R.id.date_end);
         mDesc = (EditText) findViewById(R.id.add_desc);
         mAddButton = (Button) findViewById(R.id.add_record_button);
         mPhotoSpinner = (Spinner) findViewById(R.id.photoSpinner);
@@ -170,11 +174,12 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
 
                                 try {
                                     if(flag) {
-                                        begin = parseTime(mTimePicker.getCurrentHour(), mTimePicker.getCurrentMinute());
+
+                                        begin = parseTime(mTimePicker.getCurrentHour(), mTimePicker.getCurrentMinute(), mDateBegin.getText().toString());
                                     }
                                     else
                                     {
-                                        end = parseTime(mTimePicker.getCurrentHour(), mTimePicker.getCurrentMinute());
+                                        end = parseTime(mTimePicker.getCurrentHour(), mTimePicker.getCurrentMinute(), mDateEnd.getText().toString());
                                     }
 
                                 } catch (ParseException e) {
@@ -193,11 +198,11 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         return 0;
     }
 
-    private static long parseTime(int timeIntHour, int timeIntMinute) throws ParseException {
+    private static long parseTime(int timeIntHour, int timeIntMinute, String date) throws ParseException {
         String timeHour = String.valueOf(timeIntHour);
         String timeMinute = String.valueOf(timeIntMinute);
-        String time = timeHour + ":" + timeMinute;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        String time = date + " " + timeHour + ":" + timeMinute;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyy HH:mm");
         return simpleDateFormat.parse(time).getTime();
     }
 
@@ -240,6 +245,9 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         long interval;
         SimpleDateFormat sH = new SimpleDateFormat("HH");
         SimpleDateFormat sM = new SimpleDateFormat("mm");
+        SimpleDateFormat sMM = new SimpleDateFormat("MM");
+        SimpleDateFormat sD = new SimpleDateFormat("dd");
+
 
         Date dBegin = new Date(begin);
         Date dEnd = new Date(end);
@@ -248,19 +256,43 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         String endH = sH.format(dEnd);
         String beginM = sM.format(dBegin);
         String endM = sM.format(dEnd);
+        String beginMM = sMM.format(dBegin);
+        String endMM = sMM.format(dEnd);
+        String beginD = sD.format(dBegin);
+        String endD = sD.format(dEnd);
 
-        long m = Integer.parseInt(endM) - Integer.parseInt(beginM);
-        if(m<0)
-        {
-            m = -m;
-        }
-        int h = Integer.parseInt(endH) - Integer.parseInt(beginH);
-        if(h<0)
+
+        long mM = Integer.parseInt(endMM) - Integer.parseInt(beginMM);
+        if(mM<0)
         {
             Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
             toast.show();
         }
-        interval = h*60+m;
+
+        long dd = Integer.parseInt(endD) - Integer.parseInt(beginD);
+        if(dd<0 && mM==0)
+        {
+            Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+        int h = Integer.parseInt(endH) - Integer.parseInt(beginH);
+        if(h<0 && dd==0 && mM==0)
+        {
+            Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+        long m = Integer.parseInt(endM) - Integer.parseInt(beginM);
+        if(m<0 && dd==0 && mM==0 && h==0)
+        {
+            Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+
+   //     interval = h*60+m;
+        interval = mM*30*24*60 + dd*24*60 + h*60 + m;
 
         return interval;
     }
