@@ -247,6 +247,7 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         SimpleDateFormat sM = new SimpleDateFormat("mm");
         SimpleDateFormat sMM = new SimpleDateFormat("MM");
         SimpleDateFormat sD = new SimpleDateFormat("dd");
+        SimpleDateFormat sY = new SimpleDateFormat("yy");
 
 
         Date dBegin = new Date(begin);
@@ -260,39 +261,48 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         String endMM = sMM.format(dEnd);
         String beginD = sD.format(dBegin);
         String endD = sD.format(dEnd);
+        String beginY = sY.format(dBegin);
+        String endY = sY.format(dEnd);
+
+        long yy = Integer.parseInt(endY) - Integer.parseInt(beginY);
+        if(yy<0)
+        {
+            Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
+            toast.show();
+        }
 
 
         long mM = Integer.parseInt(endMM) - Integer.parseInt(beginMM);
-        if(mM<0)
+        if(mM<0 && yy==0)
         {
             Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
             toast.show();
         }
 
         long dd = Integer.parseInt(endD) - Integer.parseInt(beginD);
-        if(dd<0 && mM==0)
+        if(dd<0 && mM==0 && yy==0)
         {
             Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
             toast.show();
         }
 
         int h = Integer.parseInt(endH) - Integer.parseInt(beginH);
-        if(h<0 && dd==0 && mM==0)
+        if(h<0 && dd==0 && mM==0 && yy==0)
         {
             Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
             toast.show();
         }
 
         long m = Integer.parseInt(endM) - Integer.parseInt(beginM);
-        if(m<0 && dd==0 && mM==0 && h==0)
+        if(m<0 && dd==0 && mM==0 && h==0 && yy==0)
         {
             Toast toast = Toast.makeText(this, "Не верно введено время", Toast.LENGTH_LONG);
             toast.show();
         }
 
 
-   //     interval = h*60+m;
-        interval = mM*30*24*60 + dd*24*60 + h*60 + m;
+        //     interval = h*60+m;
+        interval = yy*365*24*60 + mM*30*24*60 + dd*24*60 + h*60 + m;
 
         return interval;
     }

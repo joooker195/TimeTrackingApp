@@ -22,7 +22,10 @@ import com.timetrackingapp.classes.PieData;
 import com.timetrackingapp.classes.Record;
 import com.timetrackingapp.db.DbUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,13 @@ public class StatisticActivity extends AppCompatActivity {
     private ArrayAdapter<Object> adapter;
     private List<Category> allCategories = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
+    private DateFormat MM = new SimpleDateFormat("MM");
+    private int beginMonth;
+    private int beginYear;
+    private int endMonth;
+    private int endYear;
+    private DateFormat yy = new SimpleDateFormat("yyyy");
+    private boolean flag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +64,7 @@ public class StatisticActivity extends AppCompatActivity {
 
         utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
         database = utils.getWritableDatabase();
+
 
         allCategories = utils.getAllCategories(database);
         viewList();
@@ -72,17 +83,32 @@ public class StatisticActivity extends AppCompatActivity {
         String t;
         Integer c;
 
-        for(int i=0; i<records.size(); i++)
+
+        for(Record r: records)
         {
-            if(mapCount.get(records.get(i).getCategoryTitle()) == null)
+            int u = Integer.parseInt(String.valueOf(r.getInterval()));
+            if(flag && Integer.parseInt(MM.format(new Date(r.getBegin())))==01)
             {
-                mapCount.put(records.get(i).getCategoryTitle(), 0);
+                if(mapCount.get(r.getCategoryTitle())==null)
+                {
+                    mapCount.put(r.getCategoryTitle(), u);
+                }
+                else {
+                    mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + u);
+                }
             }
-            else {
-                mapCount.put(records.get(i).getCategoryTitle(), mapCount.get(records.get(i).getCategoryTitle()) + 1);
+            else
+            {
+                if(!flag) {
+                    if (mapCount.get(r.getCategoryTitle()) == null) {
+                        mapCount.put(r.getCategoryTitle(), u);
+                    } else {
+                        mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + u);
+                    }
+                }
             }
-          //  mapTitle.put(records.get(i).getCategoryTitle(), records.get(i).getCategoryTitle());
         }
+
         title = mapCount.keySet().toArray();
         count = mapCount.values().toArray();
 
@@ -163,6 +189,22 @@ public class StatisticActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.statistic_settings) {
             showStatisticRecord();
+        }
+        if(id == R.id.time_settings)
+        {
+            flag = true;
+            beginMonth = endMonth = 1;
+            beginYear = endYear = 2017;
+            viewList();
+        }
+        if(id == R.id.all_time_settings)
+        {
+            flag = false;
+            viewList();
+        }
+        if(id== R.id.date_settings)
+        {
+
         }
 
         return super.onOptionsItemSelected(item);
