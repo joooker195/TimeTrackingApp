@@ -1,13 +1,17 @@
 package com.timetrackingapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseBooleanArray;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -23,6 +27,7 @@ import com.timetrackingapp.classes.Record;
 import com.timetrackingapp.db.DbUtils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,24 +38,25 @@ import java.util.Random;
 
 public class StatisticActivity extends AppCompatActivity {
 
-    private EditText begin;
-    private EditText end;
     private ListView mList;
+    private PieChart mGraficoPartidos;
+    private SparseBooleanArray mCheckedPosition;
 
-    private PieChart graficoPartidos;
-    private SparseBooleanArray checked;
     private SQLiteDatabase database;
     private DbUtils utils;
+
     private ArrayAdapter<Object> adapter;
     private List<Category> allCategories = new ArrayList<>();
-    private List<String> titles = new ArrayList<>();
-    private DateFormat MM = new SimpleDateFormat("MM");
-    private int beginMonth;
-    private int beginYear;
-    private int endMonth;
-    private int endYear;
-    private DateFormat yy = new SimpleDateFormat("yyyy");
-    private boolean flag = false;
+
+    private DateFormat mParseMonth = new SimpleDateFormat("MM");
+    private DateFormat mParseYear = new SimpleDateFormat("yyyy");
+    private int mBeginMonth;
+    private int mBeginYear;
+    private int mEndMonth;
+    private int mEndYear;
+    private boolean isMonthTimeFlag = false;
+    private boolean isUserTimeFlag = false;
+    private boolean isAllTimeFlag = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +65,8 @@ public class StatisticActivity extends AppCompatActivity {
         setTitle("Статистика");
 
         mList = (ListView) findViewById(R.id.listView);
-        graficoPartidos = (PieChart) findViewById(R.id.asdf);
-        graficoPartidos.getBackgroundPaint().setColor(Color.WHITE);
+        mGraficoPartidos = (PieChart) findViewById(R.id.asdf);
+        mGraficoPartidos.getBackgroundPaint().setColor(Color.WHITE);
 
         utils = new DbUtils(this, DbUtils.DATABASE_NAME, DbUtils.DATABASE_VERSION);
         database = utils.getWritableDatabase();
@@ -86,27 +92,43 @@ public class StatisticActivity extends AppCompatActivity {
 
         for(Record r: records)
         {
-            int u = Integer.parseInt(String.valueOf(r.getInterval()));
-            if(flag && Integer.parseInt(MM.format(new Date(r.getBegin())))==01)
+            int interval = Integer.parseInt(String.valueOf(r.getInterval()));
+            int beginMonth = Integer.parseInt(mParseMonth.format(new Date(r.getBegin())));
+            int beginYear = Integer.parseInt(mParseYear.format(new Date(r.getBegin())));
+            int endMonth = Integer.parseInt(mParseMonth.format(new Date(r.getEnd())));
+            int endYear = Integer.parseInt(mParseYear.format(new Date(r.getEnd())));
+            if(isMonthTimeFlag && beginMonth == mBeginMonth && mBeginYear == beginYear
+                    && mEndMonth == endMonth && mEndYear == endYear)
             {
                 if(mapCount.get(r.getCategoryTitle())==null)
                 {
-                    mapCount.put(r.getCategoryTitle(), u);
+                    mapCount.put(r.getCategoryTitle(), interval);
                 }
                 else {
-                    mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + u);
+                    mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + interval);
                 }
             }
-            else
+
+            if(isUserTimeFlag && beginMonth >= mBeginMonth && mBeginYear >= beginYear
+                    && mEndMonth <= endMonth && mEndYear <= endYear)
             {
-                if(!flag) {
-                    if (mapCount.get(r.getCategoryTitle()) == null) {
-                        mapCount.put(r.getCategoryTitle(), u);
-                    } else {
-                        mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + u);
-                    }
+                if(mapCount.get(r.getCategoryTitle())==null)
+                {
+                    mapCount.put(r.getCategoryTitle(), interval);
+                }
+                else {
+                    mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + interval);
                 }
             }
+
+            if(isAllTimeFlag) {
+                if (mapCount.get(r.getCategoryTitle()) == null) {
+                    mapCount.put(r.getCategoryTitle(), interval);
+                } else {
+                    mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + interval);
+                }
+            }
+
         }
 
         title = mapCount.keySet().toArray();
@@ -144,10 +166,10 @@ public class StatisticActivity extends AppCompatActivity {
             for (PieData pieData:times){
                 if (pieData.getTime()!=0){//убираю сегменты с нулевыми отрезками, дабы не загромождать подпись
                     Segment segment = new Segment(pieData.getCategory(),pieData.getTime());
-                    graficoPartidos.addSeries(segment, new SegmentFormatter(Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255)), Color.BLACK,Color.BLACK, Color.BLACK));
+                    mGraficoPartidos.addSeries(segment, new SegmentFormatter(Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255)), Color.BLACK,Color.BLACK, Color.BLACK));
                 }
             }
-            PieRenderer pieRenderer = graficoPartidos.getRenderer(PieRenderer.class);
+            PieRenderer pieRenderer = mGraficoPartidos.getRenderer(PieRenderer.class);
             pieRenderer.setDonutSize((float) 0 / 100,   PieRenderer.DonutMode.PERCENT);
         }
         catch (NullPointerException e){
@@ -158,12 +180,12 @@ public class StatisticActivity extends AppCompatActivity {
 
     public void showStatisticRecord()
     {
-        checked = mList.getCheckedItemPositions();
+        mCheckedPosition = mList.getCheckedItemPositions();
         List<String> selectItem = new ArrayList<>();
-        for (int i = 0; i < checked.size(); i++) {
-            int position = checked.keyAt(i);
-            // Add sport if it is checked i.e.) == TRUE!
-            if (checked.valueAt(i))
+        for (int i = 0; i < mCheckedPosition.size(); i++) {
+            int position = mCheckedPosition.keyAt(i);
+            // Add sport if it is mCheckedPosition i.e.) == TRUE!
+            if (mCheckedPosition.valueAt(i))
                 selectItem.add( (String) adapter.getItem(position));
         }
 
@@ -190,23 +212,79 @@ public class StatisticActivity extends AppCompatActivity {
         if (id == R.id.statistic_settings) {
             showStatisticRecord();
         }
-        if(id == R.id.time_settings)
+        if(id == R.id.month_time_settings)
         {
-            flag = true;
-            beginMonth = endMonth = 1;
-            beginYear = endYear = 2017;
+            isMonthTimeFlag = true;
+            isUserTimeFlag = false;
+            isAllTimeFlag = false;
+            mBeginMonth = mEndMonth = 1;
+            mBeginYear = mEndYear = 2017;
             viewList();
         }
         if(id == R.id.all_time_settings)
         {
-            flag = false;
+            isMonthTimeFlag = false;
+            isUserTimeFlag = false;
+            isAllTimeFlag = true;
             viewList();
         }
-        if(id== R.id.date_settings)
+        if(id== R.id.user_time_settings)
         {
+            isMonthTimeFlag = false;
+            isUserTimeFlag = true;
+            isAllTimeFlag = false;
+            onClickDatePicker();
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onClickDatePicker() {
+
+        LayoutInflater layoutInflater = LayoutInflater.from(StatisticActivity.this);
+        final View promptView = layoutInflater.inflate(R.layout.content_add_time_statistic, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(StatisticActivity.this);
+        alertDialogBuilder.setTitle("Выберите период");
+        alertDialogBuilder.setView(promptView);
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int id) {
+                                try {
+                                    EditText mBegin = (EditText) promptView.findViewById(R.id.edit_begin);
+                                    EditText mEnd = (EditText) promptView.findViewById(R.id.edit_end);
+
+                                    String begin = mBegin.getText().toString();
+                                    String end = mEnd.getText().toString();
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+                                    long time = simpleDateFormat.parse(begin).getTime();
+                                    mBeginMonth = Integer.parseInt(mParseMonth.format(new Date(time)));
+                                    mBeginYear = Integer.parseInt(mParseYear.format(new Date(time)));
+
+                                    time = simpleDateFormat.parse(end).getTime();
+                                    mEndMonth = Integer.parseInt(mParseMonth.format(new Date(time)));
+                                    mEndYear = Integer.parseInt(mParseYear.format(new Date(time)));
+                                }
+                                catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                viewList();
+                                dialog.cancel();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                 });
+
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 }

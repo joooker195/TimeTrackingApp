@@ -2,21 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/statistic_settings"
-        android:orderInCategory="100"
-        android:title="Интервал"
-        android:icon="@drawable/ic_alarm_on_white"
-        app:showAsAction="always" />
 
     <item
-        android:id="@+id/time_settings"
+        android:id="@+id/month_time_settings"
         android:orderInCategory="100"
         android:title="Месяц"
         android:icon="@drawable/ic_month_white_24dp"
         app:showAsAction="always" />
     <item
-        android:id="@+id/date_settings"
+        android:id="@+id/user_time_settings"
         android:orderInCategory="100"
         android:title="Произвольно"
         android:icon="@drawable/ic_user_time_white_24dp"
@@ -26,6 +20,13 @@
         android:orderInCategory="100"
         android:title="Все время"
         android:icon="@drawable/ic_all_time_white"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/statistic_settings"
+        android:orderInCategory="100"
+        android:title="Интервал"
+        android:icon="@drawable/ic_alarm_on_white"
         app:showAsAction="always" />
 
 </menu>

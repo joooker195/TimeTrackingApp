@@ -38,8 +38,8 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
     public static String TITLE = "";
 
     private TextView mTitle;
-    private EditText mBegin;
-    private EditText mEnd;
+    private EditText mBeginTime;
+    private EditText mEndTime;
     private EditText mDateBegin;
     private EditText mDateEnd;
     private EditText mDesc;
@@ -70,8 +70,8 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
         setContentView(R.layout.activity_add_record);
 
         mTitle = (TextView) findViewById(R.id.cat_title);
-        mBegin = (EditText) findViewById(R.id.time_begin);
-        mEnd = (EditText) findViewById(R.id.time_end);
+        mBeginTime = (EditText) findViewById(R.id.time_begin);
+        mEndTime = (EditText) findViewById(R.id.time_end);
         mDateBegin = (EditText) findViewById(R.id.date_begin);
         mDateEnd = (EditText) findViewById(R.id.date_end);
         mDesc = (EditText) findViewById(R.id.add_desc);
@@ -80,26 +80,26 @@ public class AddRecordActivity extends AppCompatActivity implements Comparable{
 
         mTitle.setText(TITLE);
 
-        mBegin.setInputType(InputType.TYPE_NULL);
-        mEnd.setInputType(InputType.TYPE_NULL);
+        mBeginTime.setInputType(InputType.TYPE_NULL);
+        mEndTime.setInputType(InputType.TYPE_NULL);
 
-        mBegin.setOnClickListener(new View.OnClickListener() {
+        mBeginTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 flag = true;
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mBegin.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                onClickTimePicker(mBegin);
+                imm.hideSoftInputFromWindow(mBeginTime.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                onClickTimePicker(mBeginTime);
             }
         });
 
-        mEnd.setOnClickListener(new View.OnClickListener() {
+        mEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 flag = false;
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mEnd.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                onClickTimePicker(mEnd);
+                imm.hideSoftInputFromWindow(mEndTime.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                onClickTimePicker(mEndTime);
             }
         });
 
