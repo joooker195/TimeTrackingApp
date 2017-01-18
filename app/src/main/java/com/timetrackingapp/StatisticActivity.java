@@ -48,12 +48,17 @@ public class StatisticActivity extends AppCompatActivity {
     private ArrayAdapter<Object> adapter;
     private List<Category> allCategories = new ArrayList<>();
 
+    private DateFormat mParseDay = new SimpleDateFormat("dd");
     private DateFormat mParseMonth = new SimpleDateFormat("MM");
     private DateFormat mParseYear = new SimpleDateFormat("yyyy");
+
+    private int mBeginDay;
     private int mBeginMonth;
     private int mBeginYear;
+    private int mEndDay;
     private int mEndMonth;
     private int mEndYear;
+
     private boolean isMonthTimeFlag = false;
     private boolean isUserTimeFlag = false;
     private boolean isAllTimeFlag = true;
@@ -79,10 +84,9 @@ public class StatisticActivity extends AppCompatActivity {
 
     }
 
-    public void viewList()
-    {
+    public void viewList() {
         List<Record> records = utils.getRecords(database);
-        Map<String, Integer> mapCount  = new HashMap<>();
+        Map<String, Integer> mapCount = new HashMap<>();
 
         Object[] title;
         Object[] count;
@@ -90,36 +94,38 @@ public class StatisticActivity extends AppCompatActivity {
         Integer c;
 
 
-        for(Record r: records)
-        {
+        int countRecord = 1;
+        for (Record r : records) {
             int interval = Integer.parseInt(String.valueOf(r.getInterval()));
+
+            int beginDay = Integer.parseInt(mParseDay.format(new Date(r.getBegin())));
             int beginMonth = Integer.parseInt(mParseMonth.format(new Date(r.getBegin())));
             int beginYear = Integer.parseInt(mParseYear.format(new Date(r.getBegin())));
+
+            int endDay = Integer.parseInt(mParseDay.format(new Date(r.getEnd())));
             int endMonth = Integer.parseInt(mParseMonth.format(new Date(r.getEnd())));
             int endYear = Integer.parseInt(mParseYear.format(new Date(r.getEnd())));
-            if(isMonthTimeFlag && beginMonth == mBeginMonth && mBeginYear == beginYear
-                    && mEndMonth == endMonth && mEndYear == endYear)
-            {
-                if(mapCount.get(r.getCategoryTitle())==null)
-                {
+
+            if (isMonthTimeFlag && beginMonth == mBeginMonth && mBeginYear == beginYear
+                    && mEndMonth == endMonth && mEndYear == endYear) {
+                if (mapCount.get(r.getCategoryTitle()) == null) {
                     mapCount.put(r.getCategoryTitle(), interval);
-                }
-                else {
+                } else {
                     mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + interval);
                 }
             }
 
-            if(isUserTimeFlag && beginMonth >= mBeginMonth && mBeginYear >= beginYear
-                    && mEndMonth <= endMonth && mEndYear <= endYear)
-            {
-                if(mapCount.get(r.getCategoryTitle())==null)
-                {
+            if (isUserTimeFlag
+                    && ((mBeginMonth <= beginMonth && mBeginYear <= beginYear)
+                    && (endMonth <= mEndMonth && endYear <= mEndYear))) {
+
+                if (mapCount.get(r.getCategoryTitle()) == null) {
                     mapCount.put(r.getCategoryTitle(), interval);
-                }
-                else {
+                } else {
                     mapCount.put(r.getCategoryTitle(), mapCount.get(r.getCategoryTitle()) + interval);
                 }
             }
+
 
             if(isAllTimeFlag) {
                 if (mapCount.get(r.getCategoryTitle()) == null) {
@@ -164,7 +170,7 @@ public class StatisticActivity extends AppCompatActivity {
                 times.add(new PieData(category.getTitle(),utils.pieData(database,category)));
             }
             for (PieData pieData:times){
-                if (pieData.getTime()!=0){//убираю сегменты с нулевыми отрезками, дабы не загромождать подпись
+                if (pieData.getTime()!=0){
                     Segment segment = new Segment(pieData.getCategory(),pieData.getTime());
                     mGraficoPartidos.addSeries(segment, new SegmentFormatter(Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255)), Color.BLACK,Color.BLACK, Color.BLACK));
                 }
@@ -184,7 +190,7 @@ public class StatisticActivity extends AppCompatActivity {
         List<String> selectItem = new ArrayList<>();
         for (int i = 0; i < mCheckedPosition.size(); i++) {
             int position = mCheckedPosition.keyAt(i);
-            // Add sport if it is mCheckedPosition i.e.) == TRUE!
+
             if (mCheckedPosition.valueAt(i))
                 selectItem.add( (String) adapter.getItem(position));
         }
@@ -196,19 +202,16 @@ public class StatisticActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.statistic, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.statistic_settings) {
             showStatisticRecord();
         }
@@ -261,10 +264,13 @@ public class StatisticActivity extends AppCompatActivity {
                                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
                                     long time = simpleDateFormat.parse(begin).getTime();
+
+                                    mBeginDay = Integer.parseInt(mParseDay.format(new Date(time)));
                                     mBeginMonth = Integer.parseInt(mParseMonth.format(new Date(time)));
                                     mBeginYear = Integer.parseInt(mParseYear.format(new Date(time)));
 
                                     time = simpleDateFormat.parse(end).getTime();
+                                    mEndDay = Integer.parseInt(mParseDay.format(new Date(time)));
                                     mEndMonth = Integer.parseInt(mParseMonth.format(new Date(time)));
                                     mEndYear = Integer.parseInt(mParseYear.format(new Date(time)));
                                 }
